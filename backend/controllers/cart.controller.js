@@ -84,7 +84,9 @@ if(product){
         product.quantity = quantity;
     }
 
-    
+    await user.save()
+    res.status(201).json(user.cartItems);
+
 
 }
 else{
