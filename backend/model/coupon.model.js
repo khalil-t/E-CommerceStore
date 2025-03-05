@@ -1,44 +1,38 @@
 import mongoose from "mongoose";
 
-const orderSchema = new mongoose.Schema(
+const couponSchema = new mongoose.Schema(
 	{
-		user: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "User",
+		code: {
+			type: String,
 			required: true,
+			unique: true,
 		},
-		products: [
-			{
-				product: {
-					type: mongoose.Schema.Types.ObjectId,
-					ref: "Product",
-					required: true,
-				},
-				quantity: {
-					type: Number,
-					required: true,
-					min: 1,
-				},
-				price: {
-					type: Number,
-					required: true,
-					min: 0,
-				},
-			},
-		],
-		totalAmount: {
+		discountPercentage: {
 			type: Number,
 			required: true,
 			min: 0,
+			max: 100,
 		},
-		stripeSessionId: {
-			type: String,
+		expirationDate: {
+			type: Date,
+			required: true,
+		},
+		isActive: {
+			type: Boolean,
+			default: true,
+		},
+		userId: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "User",
+			required: true,
 			unique: true,
 		},
 	},
-	{ timestamps: true }
+	{
+		timestamps: true,
+	}
 );
 
-const Order = mongoose.model("Order", orderSchema);
+const Coupon = mongoose.model("Coupon", couponSchema);
 
-export default Order;
+export default Coupon;
