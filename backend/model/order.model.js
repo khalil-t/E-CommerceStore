@@ -35,6 +35,11 @@ const orderSchema = new mongoose.Schema(
 			type: String,
 			unique: true,
 		},
+		status: {
+			type: String,
+			enum: ["pending", "paid", "failed", "canceled"], // Allowed statuses
+			default: "pending", // Set default to "pending"
+		},
 	},
 	{ timestamps: true }
 );
