@@ -81,4 +81,46 @@ return newCoupon
 
 }
 
+export const checkoutSuccess= async(req, res)=>{
+    const { orderId, paymentStatus } = req.body; 
+try{
+const order = await Order.findOne({
+    _id: orderId, 
+    status : "pending"
+})
+if (!order) {
+    return res.status(404).json({ error: "Pending order not found" });
+  }
+  if (paymentStatus !== "success") {
+    return res.status(400).json({ error: "Payment was not successful" });
+  }
+
+  
+  const coupon = await Coupon.findOne({
+    userId: order.user,
+    isActive: true,
+  })
+if(coupon){
+    coupon.isActive=false
+await coupon.save()
+}
+order.status= "paid"
+await order.save()
+
+
+res.status(200).json({
+    success: true,
+    message: "Order completed successfully.",
+    orderId: order._id,
+    finalPrice: order.totalAmount,
+  });
+
+}
+catch(error){
+    console.log("error" , error.message)
+     res.status(500).json({ message: "Server error", error: error.message });
+    }
+
+}
+
 
