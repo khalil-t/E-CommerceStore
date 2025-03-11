@@ -95,7 +95,7 @@ if (!order) {
     return res.status(400).json({ error: "Payment was not successful" });
   }
 
-  
+
   const coupon = await Coupon.findOne({
     userId: order.user,
     isActive: true,
@@ -123,4 +123,21 @@ catch(error){
 
 }
 
+/*
+async function createCoupon(discountPercentage, userId) {
+    
+    const couponCode = "DISCOUNT" + Math.random().toString(36).substring(2, 8).toUpperCase();
 
+    const newCoupon = new Coupon({
+        code: couponCode,
+        discountPercentage: discountPercentage,
+        expirationDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // Valid for 30 days
+        userId: userId,
+        isActive: true,
+    });
+
+    await newCoupon.save()
+    return couponCode
+
+
+}*/
