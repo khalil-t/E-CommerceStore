@@ -2,7 +2,6 @@ import Product from "../model/product.model";
 import User from "../model/user.model.js";
 import Order from "../model/order.model";
 export const getAnalyticsData = async (req, res)=>{
-try{
 const  numProducts  = await Product.countDocuments()
 const  numUsers = await User.countDocuments()
 
@@ -30,10 +29,32 @@ res.status(200).json({
 
 }
 
-catch(error){
-    console.log("error" , error.message)
-     res.status(500).json({ message: "Server error", error: error.message });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function getDatesInRange(startDate, endDate) {
+    let dates = [];
+    let currentDate = new Date(startDate);
+
+    while (currentDate <= new Date(endDate)) {
+        dates.push(currentDate.toISOString().split("T")[0]); // Format YYYY-MM-DD
+        currentDate.setDate(currentDate.getDate() + 1); // Move to next day
     }
 
-
+    return dates;
 }
+
+ 
