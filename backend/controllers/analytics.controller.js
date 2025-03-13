@@ -35,6 +35,62 @@ res.status(200).json({
 
 
 
+export const getDailySalesData=async(startDate, endDate)=>{
+try{
+    const { startDate, endDate } = req.body; 
+
+    const orders = await Order.find({
+    createdAt: { $gte: startDate, $lte: endDate}
+});
+
+const salesData = await Order.aggregate([
+    {
+        $match: {
+            createdAt: {
+                $gte: startDate,
+                $lte: endDate,
+            },
+        },
+    },
+    {
+        $group: {
+            _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+            sales: { $sum: 1 },
+            revenue: { $sum: "$totalAmount" },
+        },
+    },
+    { $sort: { _id: 1 } },
+]);
+
+
+let dates = []
+dates = getDatesInRange(startDate, endDate)
+
+
+const completeSalesData = dates.map(date => {
+    const found = salesData.find(sale => sale._id === date);
+    return {
+        date,
+        sales: found ? found.sales : 0,
+        revenue: found ? found.revenue : 0
+    };
+});
+
+
+res.status(200).json({
+    success: true,
+    orders: orders,
+    salesData : completeSalesData
+});
+
+
+}
+catch(error){
+    console.log("error" , error.message)
+    res.status(500).json({ message: "Server error", error: error.message });
+    
+    }
+}
 
 
 
