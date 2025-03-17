@@ -30,11 +30,6 @@ res.status(200).json({
 }
 
 
-
-
-
-
-
 export const getDailySalesData=async(startDate, endDate)=>{
 try{
     const { startDate, endDate } = req.body; 
