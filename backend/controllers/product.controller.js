@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
-import Product from "../model/product.model";
-import cloudinary from "../lib/cloudinary";
+import Product from "../model/product.model.js";
 import { v2 as cloudinary } from 'cloudinary';
 export const getAllProducts=async(req, res)=>{
 try{

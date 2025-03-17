@@ -1,6 +1,6 @@
-import Product from "../model/product.model";
-import Coupon from "../model/coupon.model";
-import Order from "../model/order.model";
+import Product from "../model/product.model.js";
+import Coupon from "../model/coupon.model.js";
+import Order from "../model/order.model.js";
 export const createCheckoutSession= async(req, res)=>{
 try{
     const {products, couponCode}=req.body
