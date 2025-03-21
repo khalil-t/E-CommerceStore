@@ -14,7 +14,7 @@ import productRoutes from "./routes/product.route.js";
 
 const app = express();
 const PORT = process.env.PORT ;
-
+app.use(express.json());
 
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/auth", authRoutes);

@@ -7,30 +7,25 @@ export const signup = async(req , res)=>{
 if (password != confirmPassword){
     return res.status(400).json({error :'Passwords do not match' })
 }
-const find = User.findOne({email})
+const find = await User.findOne({email})
 
 if(find){
-    res.status(409).json({error : "Username already exists"})
+   return res.status(409).json({error : "Username already exists"})
 }
 const NewUser = new User({ name, email, password })
 await NewUser.save()
 const token =generateTokenAndSetCookie(NewUser._id.toString(),res)
 res.status(200).json({
 	_id: NewUser._id,
-    fullname: NewUser.fullname,
-				username: NewUser.username,
-				profilePic: NewUser.profilePic,   
+    fullname: NewUser.name,
+				
 })
     }
     catch(error){
         console.error('Signup error:', error);
     
-        res.status(500).json({ error: "this" }) }
+        res.status(500).json({ error: "Error" }) }
 }
-
-
-
-
 
 export const login = async(req , res)=>{
 
@@ -43,9 +38,8 @@ generateTokenAndSetCookie(newuser._id, res )
 
 res.status(200).json({
     _id: newuser._id,
-    fullname: newuser.fullname,
-				username: newuser.username,
-				profilePic: newuser.profilePic,
+    fullname: newuser.name,
+		
 })
 
 }
@@ -57,26 +51,6 @@ catch(error){
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     export const logout = async(req , res)=>{
 try {
