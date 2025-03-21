@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import Product from "../model/product.model.js";
-import { v2 as cloudinary } from 'cloudinary';
+import cloudinary  from '../lib/cloudinary.js';
 export const getAllProducts=async(req, res)=>{
 try{
 const products =await Product.find({})
@@ -36,28 +36,39 @@ catch(error){
 
 }
 
-export const createProduct = async (req, res)=>{
-try{
-const {name, description, price, image, category }=req.body
-cloudinaryResponse = null 
-if(image){
-    const upload = await cloudinary.uploader.upload(image, { folder: "products" })
-}
-const product = await Product.create({name, description, price, image: upload?.secure_url?cloudinaryResponse.secure_url : "" , category })
+export const createProduct = async (req, res) => {
+    try {
+      const { name, description, price, image, category } = req.body;
+      let cloudinaryResponse = null;
+      console.log("Received image:", image);
 
-res.status(201).json(product)
-}
-catch(error){
-    console.log("error" , error.message)
-    res.status(500).json({ message: "Server error", error: error.message });
-}
-}
+      if (image) {
+        cloudinaryResponse = await cloudinary.uploader.upload(image, {
+          folder: "products",
+        });
+      }
+
+      const product = await Product.create({
+        name,
+        description,
+        price,
+        image: cloudinaryResponse?.secure_url || "", 
+        category,
+      });
+  
+      res.status(201).json(product);
+    } catch (error) {
+      console.log("error", error.message);
+      res.status(500).json({ message: "Server error", error: error.message });
+    }
+  };
+  
 
 export const deleteProduct =async (req , res)=>{
 try{
 
     const { id: productId } = req.params;
-const product = await Product.find(productId)
+const product = await Product.findById(productId)
 
 if(!product){
     return res.status(404).json({ message: "Product not found" })
@@ -114,7 +125,7 @@ const {category}=req.params
 const product= await Product.find({category: category })
 
 if (product.length===0){
-res.status(404).json({ message: "No products found in this category", error: error.message })
+res.status(404).json({ message: "No products found in this category"})
 }
 
 res.status(200).json(product)
