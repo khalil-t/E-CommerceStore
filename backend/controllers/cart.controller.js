@@ -5,19 +5,35 @@ import Product from "../model/product.model.js"
 export const getCartProducts =async (req , res)=>{
 try{
 const products = await Product.find({ _id: { $in: req.user.cartItems.map(item => item.id) } }) 
-const cartItems = products.map((product)=>{
-const item = req.user.cartItems.find((cartItem)=>{
-cartItem.product.totoString() === product._id.toString()
-return {...product.toJSON(), quantity: item ? item.quantity : 1}})
-res.status(201).send(cartItems)})}
+
+const cartItems = products.map((product) => {
+    const item = req.user.cartItems.find(
+      (cartItem) => cartItem.product.toString() === product._id.toString()
+    );
+
+    return {
+      ...product.toJSON(),
+      quantity: item ? item.quantity : 1,
+    };
+  });
+
+  res.status(200).json(cartItems);
+
+}
 catch(error){
     console.log("Error fetching cart products:", error.message);
 
     res.status(500).json({error: error.message})}}
 
 
+
 export const addToCart= async (req, res)=>{
 try{
+
+    if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized: User not found" });
+      }
+
  const { productId } = req.body;
  const user = req.user 
 const product =  user.cartItems.find((item) => item.product.toString() === productId)
@@ -44,6 +60,7 @@ export const removeAllFromCart= async (req,res)=>{
 try{
 const {productId}= req.params
 const user = req.user
+console.log(productId)
 if(productId){
     user.cartItems =  user.cartItems.filter((item) => item.product.toString() !== productId)
 
