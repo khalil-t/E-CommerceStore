@@ -27,6 +27,7 @@ catch(error){
 
 export const validateCoupon= async(req,res)=>{
 
+    
 try{
     const userId  = req.user.id
     const {code} = req.body
