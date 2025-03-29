@@ -37,8 +37,6 @@ await newOrder.save();
 
 if(totalAmount>= 200){
     await createNewCoupon(req.user._id);
-
-
 }
 
 
@@ -63,9 +61,6 @@ catch(error){
     console.log("error" , error.message)
      res.status(500).json({ message: "Server error", error: error.message });
     }
-
-
-
 }
 
 async function createNewCoupon(userId) {
