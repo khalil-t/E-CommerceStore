@@ -19,9 +19,14 @@ const app = express();
 
 app.use(cookieParser());
 const PORT = process.env.PORT ;
+
 app.use(express.json());
-app.use(cors());
-app.use("/api/analytics", analyticsRoutes);
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Replace with your frontend URL
+    credentials: true, // Allow cookies & sessions
+  })
+);app.use("/api/analytics", analyticsRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/coupons", couponRoutes);
