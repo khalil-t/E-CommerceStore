@@ -11,6 +11,7 @@ import couponRoutes from "./routes/coupon.route.js";
 import paymentRoutes from "./routes/payment.route.js";
 import productRoutes from "./routes/product.route.js";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 
 
@@ -18,9 +19,14 @@ const app = express();
 
 app.use(cookieParser());
 const PORT = process.env.PORT ;
-app.use(express.json());
 
-app.use("/api/analytics", analyticsRoutes);
+app.use(express.json());
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Replace with your frontend URL
+    credentials: true, // Allow cookies & sessions
+  })
+);app.use("/api/analytics", analyticsRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/coupons", couponRoutes);
