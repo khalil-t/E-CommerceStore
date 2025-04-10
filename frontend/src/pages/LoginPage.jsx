@@ -3,10 +3,10 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { LogIn, Mail, Lock, ArrowRight, Loader } from "lucide-react";
 import { Input } from "postcss";
-import UseUserStore from "../stores/useUserStore";
+import UseLogin from "../stores/useUserStore";
 const LoginPage = () => {
 
-	const {Login}= UseUserStore()
+	const {Login}= UseLogin()
 const [LogInData , setLogIn]= useState({
 	Password:"",
 	Email :""
