@@ -19,8 +19,8 @@ const app = express();
 
 app.use(cookieParser());
 const PORT = process.env.PORT ;
-
 app.use(express.json());
+app.use(cors());
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/cart", cartRoutes);

@@ -84,9 +84,7 @@ catch(error){
 export const updateQuantity = async (req , res)=>{
 try{
     const { id: productId } = req.params;
-const { 
-    
- } =req.body
+const { quantity } =req.body
 const user = req.user
 
 const product = user.cartItems.find(

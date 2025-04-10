@@ -52,11 +52,6 @@ catch(error){
 
 }
 
-
-
-
-
-
     export const logout = async(req , res)=>{
 try {
     res.clearCookie("jwt"); 
