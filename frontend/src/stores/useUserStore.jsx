@@ -1,10 +1,14 @@
-const UseLogin=()=>{
+import User from "../../../backend/model/user.model";
+
+
+
+const useUserStore=()=>{
 
 const Login=async(Login)=>{
 
     try{
 const {Email , Password}=Login
-const response = await fetch("", {
+const response = await fetch(import.meta.env.VITE_APP_LOGIN_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: 'include', 
@@ -17,11 +21,74 @@ const response = await fetch("", {
 
   const data= await response.json()
   console.log(data)
-    }
-    catch (error) {
-        console.log("Error in Signup:", error.message);
-      }}
+  
 
-return {Login}
 }
-export default UseLogin
+    catch (error) {
+        console.log("Error in login:", error.message);
+      }
+    
+    
+    
+    }
+
+
+const Signup=async(Signup)=>{
+try{
+  const {	name,
+		email,
+		password,
+		confirmPassword}=Signup
+  const response = await fetch(import.meta.env.VITE_APP_SIGNUP_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: 'include', 
+      body: JSON.stringify({ name,
+        email,
+        password,
+        confirmPassword}),
+    });
+  
+    if (!response.ok) {
+      throw new Error('Failed to sign up');
+    }
+  
+    const data= await response.json()
+    console.log(data)
+
+
+}
+catch (error) {
+  console.log("Error in Signup:", error.message);
+}
+
+}
+
+
+
+
+const getUser=async()=>{
+try{
+  const response = await fetch(import.meta.env.VITE_APP_getAllUsers_URL, {
+    method: "GET",
+  headers: { "Content-Type": "application/json" },
+  credentials: 'include',
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to sign up');
+  }
+
+  const data= await response.json()
+  console.log(data)
+return data
+}
+catch (error) {
+  console.log("Error :", error.message);
+}
+}
+
+
+return {Login,Signup, getUser}
+}
+export default useUserStore

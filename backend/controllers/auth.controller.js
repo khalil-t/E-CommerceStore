@@ -52,7 +52,7 @@ catch(error){
 
 }
 
-    export const logout = async(req , res)=>{
+export const logout = async(req , res)=>{
 try {
     res.clearCookie("jwt"); 
     res.status(200).json({ message: "Logged out successfully" });
@@ -64,4 +64,18 @@ catch(error){
 
 }
 
-    }
+}
+
+
+export const getAllUsers=async(req,res)=>{
+        try {
+const User=  req.user
+            res.status(200).json(User)
+        }
+        catch(error){
+            console.log("Error getAllUsers", error.message);
+    res.status(500).json({ error: "Internal Server Error", details: error.message });
+        
+        }
+
+}
