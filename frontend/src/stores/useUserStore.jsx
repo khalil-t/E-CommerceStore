@@ -64,7 +64,20 @@ catch (error) {
 
 }
 
-
+const Logout = async()=>{
+try {
+  const response = await fetch(import.meta.env.VITE_APP_logout_URL, {
+    method: "GET",
+  headers: { "Content-Type": "application/json" },
+  credentials: 'include',
+  });
+  const data= await response.json()
+  console.log(data)
+}
+catch (error) {
+  console.log("Error in logout:", error.message);
+}
+}
 
 
 const getUser=async()=>{
@@ -89,6 +102,6 @@ catch (error) {
 }
 
 
-return {Login,Signup, getUser}
+return {Login,Signup, getUser , Logout}
 }
 export default useUserStore

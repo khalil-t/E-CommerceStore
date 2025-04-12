@@ -24,16 +24,13 @@ const [user, setUsers] = useState([]);
 
 useEffect(()=>{
 const fetchUsers=async()=>{
-	const data = await getUser()
-}
+	const data = await getUser()}
 if(data){
-	setUsers(data)
-}
+	setUsers(data)}
 
 fetchUsers()
 },[])
 user.role == "admin"
-console.log(user.role)
 
 	return (
 		<div className='min-h-screen bg-gray-900 text-white relative overflow-hidden'>
