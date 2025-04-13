@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import Product from "../model/product.model.js";
 import cloudinary  from '../lib/cloudinary.js';
+
+
 export const getAllProducts=async(req, res)=>{
 try{
 const products =await Product.find({})

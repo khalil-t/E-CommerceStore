@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import CategoryItem from "../components/CategoryItem";
 import FeaturedProducts from "../components/FeaturedProducts";
 import React from 'react';
-
+import useProductStore from "../stores/useProductStore"
 const categories = [
 	{ href: "/jeans", name: "Jeans", imageUrl: "/jeans.jpg" },
 	{ href: "/t-shirts", name: "T-shirts", imageUrl: "/tshirts.jpg" },
@@ -14,7 +14,7 @@ const categories = [
 ];
 
 const HomePage = () => {
-
+const {}=useProductStore()
 
 
 	return (
