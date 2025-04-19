@@ -3,6 +3,8 @@
 
 
 const useProductStore =()=>{
+
+
 const getAllProducts=async()=>{
 try{
     const response = await fetch(import.meta.env.VITE_APP_products, {
@@ -84,7 +86,7 @@ const deleteProduct=async(productId)=>{
 
 const getProductsByCategory=async(category)=>{
     try{
-
+console.log(category)
         const response = await fetch(`${import.meta.env.VITE_APP_category}/${category}`, {
             method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -93,7 +95,7 @@ const getProductsByCategory=async(category)=>{
           const data= await response.json()
           console.log(data)
     
-    
+    return data
     }
         catch (error) {
             console.log("Error in getProductsByCategory:", error.message);

@@ -33,9 +33,6 @@ catch(error){
     res.status(500).json({ message: "Server error", error: error.message });
 }
 
-
-
-
 }
 
 export const createProduct = async (req, res) => {
@@ -120,14 +117,15 @@ catch(error){
 
 }
 
+
 export const getProductsByCategory = async(req, res)=>{
 try{
 const {category}=req.params
 
 const product= await Product.find({category: category })
 
-if (product.length===0){
-res.status(404).json({ message: "No products found in this category"})
+if (!product || product.length===0){
+return res.status(404).json({ message: "No products found in this category"})
 }
 
 res.status(200).json(product)
@@ -137,12 +135,9 @@ catch(error){
     console.log("error" , error.message)
     res.status(500).json({ message: "Server error", error: error.message });
 }
-
-
-
-
-
 }
+
+
 
 
 export const toggleFeaturedProduct = async (req, res)=>{
