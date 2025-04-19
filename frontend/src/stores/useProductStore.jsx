@@ -68,7 +68,7 @@ const createProduct=async(product)=>{
 const deleteProduct=async(productId)=>{
     try{
 
-        const response = await fetch(`${import.meta.env.VITE_APP_removeAllFromCart}/${productId}`, {
+        const response = await fetch(`${import.meta.env.VITE_APP_createProduct}/${productId}`, {
             method: "DELETE",
           headers: { "Content-Type": "application/json" },
           credentials: 'include',
