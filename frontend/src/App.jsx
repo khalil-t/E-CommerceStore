@@ -1,4 +1,5 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { data, Navigate, Route, Routes } from "react-router-dom";
+import React from 'react';
 
 import HomePage from "./pages/HomePage";
 import SignUpPage from "./pages/SignUpPage";
@@ -9,16 +10,21 @@ import CategoryPage from "./pages/CategoryPage";
 import Navbar from "./components/Navbar";
 import { Toaster } from "react-hot-toast";
 
-import { useEffect } from "react";
+import { useEffect , useState } from "react";
 import LoadingSpinner from "./components/LoadingSpinner";
 import CartPage from "./pages/CartPage";
 
 import PurchaseSuccessPage from "./pages/PurchaseSuccessPage";
 import PurchaseCancelPage from "./pages/PurchaseCancelPage";
-
+import useUserStore from "./stores/useUserStore";
+ import useUser from "./lib/Zustand";
 function App() {
+	//set 
+	const setUser = useUser((state) => state.setUser);  
+	const user = useUser((state) => state.user);
+const {getUser}= useUserStore()
 
-let user
+
 	return (
 		<div className='min-h-screen bg-gray-900 text-white relative overflow-hidden'>
 			{/* Background gradient */}

@@ -1,12 +1,16 @@
-import { useState } from "react";
+import { useState , useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { LogIn, Mail, Lock, ArrowRight, Loader } from "lucide-react";
+import useUser from "../lib/Zustand";
 import { Input } from "postcss";
-import UseLogin from "../stores/useUserStore";
+import { UserPlus } from "lucide-react";
+import useUserStore from "../stores/useUserStore";
 const LoginPage = () => {
+//set
+	const setUser = useUser((state) => state.setUser);  
 
-	const {Login}= UseLogin()
+	const {Login}= useUserStore()
 const [LogInData , setLogIn]= useState({
 	Password:"",
 	Email :""
@@ -17,8 +21,11 @@ e.preventDefault()
 console.log(LogInData)
 
 await Login(LogInData)
+setUser(formData)
+
 }
 
+		  
 	return (
 		<div className='flex flex-col justify-center py-12 sm:px-6 lg:px-8'>
 			<motion.div
@@ -91,7 +98,9 @@ await Login(LogInData)
 							  focus:ring-emerald-500 transition duration-150 ease-in-out disabled:opacity-50'
 					onClick={(e)=>{handlesubmit(e)}}
 						>
-						
+																<UserPlus className='mr-2 h-5 w-5' aria-hidden='true' />
+
+						Login
 						</button>
 					</form>
 

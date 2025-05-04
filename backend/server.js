@@ -19,8 +19,18 @@ const app = express();
 
 app.use(cookieParser());
 const PORT = process.env.PORT ;
-app.use(express.json());
-app.use(cors());
+
+const corsOptions = {
+  origin: process.env.CORSOPTIONS,
+  methods: 'GET,POST,PUT,DELETE',
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+
+
+app.use(express.json({ limit: '10mb' })); // or higher if needed
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/cart", cartRoutes);

@@ -3,7 +3,7 @@ import generateTokenAndSetCookie from "../util/generateToken.js"
 export const signup = async(req , res)=>{
 
     try{
-        const {name ,email , password , confirmPassword} = req.body
+        const {name ,email , password , confirmPassword,role} = req.body
 if (password != confirmPassword){
     return res.status(400).json({error :'Passwords do not match' })
 }
@@ -52,7 +52,7 @@ catch(error){
 
 }
 
-    export const logout = async(req , res)=>{
+export const logout = async(req , res)=>{
 try {
     res.clearCookie("jwt"); 
     res.status(200).json({ message: "Logged out successfully" });
@@ -64,4 +64,19 @@ catch(error){
 
 }
 
-    }
+}
+
+
+export const getAllUsers=async(req,res)=>{
+        try {
+const User=  req.user
+
+            res.status(200).json(User)
+        }
+        catch(error){
+            console.log("Error getAllUsers", error.message);
+    res.status(500).json({ error: "Internal Server Error", details: error.message });
+        
+        }
+
+}
