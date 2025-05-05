@@ -10,27 +10,26 @@ const AnalyticsTab = () => {
 	return (
 		<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
 			<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8'>
-				<AnalyticsCard
-					title='Total Users'
-				
-				
-					color='from-emerald-500 to-teal-700'
-				/>
-				<AnalyticsCard
-					title='Total Products'
-					
-					color='from-emerald-500 to-green-700'
-				/>
-				<AnalyticsCard
-					title='Total Sales'
-				
-					color='from-emerald-500 to-cyan-700'
-				/>
-				<AnalyticsCard
-					title='Total Revenue'
-					
-					color='from-emerald-500 to-lime-700'
-				/>
+			<AnalyticsCard
+  title='Total Users'
+  icon={Users}
+  color='from-emerald-500 to-teal-700'
+/>
+<AnalyticsCard
+  title='Total Products'
+  icon={Package}
+  color='from-emerald-500 to-green-700'
+/>
+<AnalyticsCard
+  title='Total Sales'
+  icon={ShoppingCart}
+  color='from-emerald-500 to-cyan-700'
+/>
+<AnalyticsCard
+  title='Total Revenue'
+  icon={DollarSign}
+  color='from-emerald-500 to-lime-700'
+/>
 			</div>
 			<motion.div
 				className='bg-gray-800/60 rounded-lg p-6 shadow-lg'
@@ -39,7 +38,7 @@ const AnalyticsTab = () => {
 				transition={{ duration: 0.5, delay: 0.25 }}
 			>
 				<ResponsiveContainer width='100%' height={400}>
-					<LineChart data={dailySalesData}>
+					<LineChart >
 						<CartesianGrid strokeDasharray='3 3' />
 						<XAxis dataKey='name' stroke='#D1D5DB' />
 						<YAxis yAxisId='left' stroke='#D1D5DB' />

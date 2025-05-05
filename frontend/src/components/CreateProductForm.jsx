@@ -1,10 +1,20 @@
-import { useState } from "react";
+import { useState , useEffect} from "react";
 import { motion } from "framer-motion";
 import { PlusCircle, Upload, Loader } from "lucide-react";
+import useUser from "../lib/Zustand.jsx"
 import useProductStore from "../stores/useProductStore.jsx"
 const categories = ["jeans", "t-shirts", "shoes", "glasses", "jackets", "suits", "bags"];
 
 const CreateProductForm = () => {
+	const productList = useUser((state) => state.productList);
+	const addProduct = useUser((state) => state.addProduct);
+	const setProductList = useUser((state) => state.setProductList);
+	const UpdateProduct = useUser((state) => state.deleteProduct);
+	
+	useEffect(() => {
+		console.log("Updated product list:", productList);
+	  }, [productList]);
+
 	const {createProduct}=useProductStore()
 const [formData, setFormData] = useState({
 	name: "", 
@@ -14,13 +24,10 @@ const [formData, setFormData] = useState({
 	category: ""
 	});
 
-console.log(formData)
 	const handlesubmit =async(e)=>{
 		e.preventDefault()
 await createProduct(formData)
-
 		}
-
 		const handleImageChange = (e) => {
 			const file = e.target.files[0];
 			if (file) {

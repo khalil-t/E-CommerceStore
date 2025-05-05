@@ -145,10 +145,10 @@ export const toggleFeaturedProduct = async (req, res)=>{
 try{
     const { id: productId } = req.params;
 const product = await Product.findById(productId )
-if(product.featured == true ){
-     product.featured = false
+if(product.isFeatured  == true ){
+     product.isFeatured  = false
 }
-else{  product.featured = true}
+else{  product.isFeatured  = true}
 await product.save()
 
 res.json(product)

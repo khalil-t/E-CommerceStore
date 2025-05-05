@@ -1,19 +1,24 @@
 
 
-
+import useUser from "../lib/Zustand"
 
 const useProductStore =()=>{
-
+    const productList = useUser((state) => state.productList);
+	const addProduct = useUser((state) => state.addProduct);
+	const setProductList = useUser((state) => state.setProductList);
+	const UpdateProduct = useUser((state) => state.UpdateProduct);
+    const toggleFeaturedInStore = useUser((state) => state.toggleFeaturedInStore);
 
 const getAllProducts=async()=>{
 try{
-    const response = await fetch(import.meta.env.VITE_APP_products, {
+    const response = await fetch(import.meta.env.VITE_APP_PRODUCTS, {
         method: "GET",
       headers: { "Content-Type": "application/json" },
       credentials: 'include',
       });
       const data= await response.json()
-      console.log(data)
+      setProductList(data.products);
+      return data;
 
 
 }
@@ -67,12 +72,13 @@ const createProduct=async(product)=>{
 const deleteProduct=async(productId)=>{
     try{
 
-        const response = await fetch(`${import.meta.env.VITE_APP_createProduct}/${productId}`, {
+        const response = await fetch(`${import.meta.env.VITE_APP_CREATEPRODUCT}/${productId}`, {
             method: "DELETE",
           headers: { "Content-Type": "application/json" },
           credentials: 'include',
           });
           const data= await response.json()
+          UpdateProduct(data)
           console.log(data)
     
     }
@@ -118,12 +124,15 @@ catch(error){
 
 const toggleFeaturedProduct =async(toggle)=>{
     try{
-        const response = await fetch(`${import.meta.env.VITE_APP_category}/${toggle}/toggle-featured`, {
-            method: "GET",
+        const response = await fetch(`${import.meta.env.VITE_APP_PRODUCTS}/${toggle}/toggle-featured`, {
+            method: "PATCH",
           headers: { "Content-Type": "application/json" },
           credentials: 'include',
           });
           const data= await response.json()
+
+          toggleFeaturedInStore(data._id, data.isFeatured);
+
           console.log(data)
     }
     catch(error){

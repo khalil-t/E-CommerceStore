@@ -22,7 +22,7 @@ const PORT = process.env.PORT ;
 
 const corsOptions = {
   origin: process.env.CORSOPTIONS,
-  methods: 'GET,POST,PUT,DELETE',
+  methods: 'GET,POST,PUT,DELETE,PATCH',
   credentials: true,
 };
 
