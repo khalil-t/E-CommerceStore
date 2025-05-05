@@ -3,7 +3,7 @@ const UseCartStore=()=>{
 
 const getCartProducts=async()=>{
 try{
-    const response = await fetch(import.meta.env.VITE_APP_GetCartProducts, {
+    const response = await fetch(import.meta.env.VITE_APP_GETCARTPRODUCTS, {
         method: "GET",
       headers: { "Content-Type": "application/json" },
       credentials: 'include',
@@ -20,7 +20,7 @@ const addToCart=async(Cart)=>{
 try{
     const{productId}= Cart
      
-    const response = await fetch(import.meta.env.VITE_APP_addToCart, {
+    const response = await fetch(import.meta.env.VITE_APP_ADDTOCART, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: 'include', 

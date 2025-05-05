@@ -1,26 +1,25 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import ProductCard from "../components/ProductCard";
 import useProductStore from "../stores/useProductStore";
 const CategoryPage = () => {
 
-
-	const { getProductsByCategory, products } = useProductStore();
+const [products , setproducts] = useState([])
+	const { getProductsByCategory } = useProductStore();
 
 	const { category } = useParams();
 
 
-
 	useEffect(()=>{
 const Productfetch=async()=>{
-	const products = await getProductsByCategory(category)
+	console.log(category)
 
-
+	const data = await getProductsByCategory(category)
+	setproducts(Array.isArray(data) ? data : []);
 }
 Productfetch()
 	}, [])
-
 	return (
 		<div className='min-h-screen'>
 			<div className='relative z-10 max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-16'>

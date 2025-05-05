@@ -19,7 +19,6 @@ import PurchaseCancelPage from "./pages/PurchaseCancelPage";
 import useUserStore from "./stores/useUserStore";
  import useUser from "./lib/Zustand";
 function App() {
-	//set 
 	const setUser = useUser((state) => state.setUser);  
 	const user = useUser((state) => state.user);
 const {getUser}= useUserStore()

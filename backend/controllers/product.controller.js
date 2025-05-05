@@ -121,7 +121,6 @@ catch(error){
 export const getProductsByCategory = async(req, res)=>{
 try{
 const {category}=req.params
-
 const product= await Product.find({category: category })
 
 if (!product || product.length===0){

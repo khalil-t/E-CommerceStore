@@ -35,7 +35,7 @@ try{
 
  const { productId } = req.body;
  const user = req.user 
-const product =  user.cartItems.find((item) => item.product.toString() === productId)
+const product =  user.cartItems.find((item) => item.product === productId)
 if (product){
     product.quantity += 1
 }else{
