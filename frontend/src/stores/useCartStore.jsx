@@ -9,7 +9,8 @@ try{
       credentials: 'include',
       });
       const data= await response.json()
-
+      console.log(data)
+return data
 }
 catch (error) {
     console.log("Error in getCartProducts:", error.message);
@@ -18,13 +19,12 @@ catch (error) {
 
 const addToCart=async(Cart)=>{
 try{
-    const{productId}= Cart
-     
+    const{_id}= Cart
     const response = await fetch(import.meta.env.VITE_APP_ADDTOCART, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: 'include', 
-        body: JSON.stringify({ productId}),
+        body: JSON.stringify({_id}),
       });
 
       if (!response.ok) {

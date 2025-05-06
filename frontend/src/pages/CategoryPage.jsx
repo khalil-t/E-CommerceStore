@@ -13,8 +13,6 @@ const [products , setproducts] = useState([])
 
 	useEffect(()=>{
 const Productfetch=async()=>{
-	console.log(category)
-
 	const data = await getProductsByCategory(category)
 	setproducts(Array.isArray(data) ? data : []);
 }

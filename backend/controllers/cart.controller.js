@@ -8,7 +8,7 @@ const products = await Product.find({ _id: { $in: req.user.cartItems.map(item =>
 
 const cartItems = products.map((product) => {
     const item = req.user.cartItems.find(
-      (cartItem) => cartItem.product.toString() === product._id.toString()
+      (cartItem) => cartItem.product = product._id
     );
 
     return {
@@ -33,13 +33,13 @@ try{
         return res.status(401).json({ message: "Unauthorized: User not found" });
       }
 
- const { productId } = req.body;
+ const { _id } = req.body;
  const user = req.user 
-const product =  user.cartItems.find((item) => item.product === productId)
+const product =  user.cartItems.find((item) => item.product === _id)
 if (product){
     product.quantity += 1
 }else{
- user.cartItems.push({ product: productId, quantity: 1 })
+ user.cartItems.push({ product: _id, quantity: 1 })
 }
 await user.save()
 res.status(201).json(user.cartItems)

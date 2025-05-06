@@ -5,11 +5,9 @@ import UseCartStore from "../stores/useCartStore.jsx"
 const ProductCard = ({ product }) => {
 	const {addToCart}=UseCartStore()
 	
-const handleAddToCart =async(e, productId)=>{
-console.log(productId)
-await addToCart(productId)
+const handleAddToCart =async(e, product)=>{
+await addToCart(product)
 }
-console.log(product)
 
 	return (
 		<div className='flex w-full relative flex-col overflow-hidden rounded-lg border border-gray-700 shadow-lg'>
@@ -28,7 +26,7 @@ console.log(product)
 				<button
 					className='flex items-center justify-center rounded-lg bg-emerald-600 px-5 py-2.5 text-center text-sm font-medium
 					 text-white hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-300'
-					 onClick={(e) => handleAddToCart(e, product._id)}
+					 onClick={(e) => handleAddToCart(e, product)}
 					 >
 					<ShoppingCart size={22} className='mr-2' />
 					Add to cart
