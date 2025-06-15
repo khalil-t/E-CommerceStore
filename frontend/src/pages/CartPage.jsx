@@ -7,18 +7,22 @@ import CartItem from "../components/CartItem";
 import PeopleAlsoBought from "../components/PeopleAlsoBought";
 import OrderSummary from "../components/OrderSummary";
 import GiftCouponCard from "../components/GiftCouponCard";
-
+import useUser from "../lib/Zustand.jsx";
 const CartPage = () => {
+	const cartItems = useUser((state) => state.cartItems);
+	const setCartItems = useUser((state) => state.setCartItems);
+
+	
 	const { getCartProducts } = UseCartStore();
 	const [CartProducts, setCartProducts]= useState([])
 	useEffect(()=>{
 const fetchCart=async()=>{
 const data = await getCartProducts()
-console.log("Fetched Cart Data:", data);
-setCartProducts(data)
+setCartItems(data)
 }
 fetchCart()
 	},[])
+
 	return (
 		<div className='py-8 md:py-16'>
 			<div className='mx-auto max-w-screen-xl px-4 2xl:px-0'>
@@ -29,19 +33,19 @@ fetchCart()
 						animate={{ opacity: 1, x: 0 }}
 						transition={{ duration: 0.5, delay: 0.2 }}
 					>
-						{getCartProducts.length === 0 ? (
+						{cartItems.length === 0 ? (
 							<EmptyCartUI />
 						) : (
 							<div className='space-y-6'>
-								{getCartProducts.map((item) => (
+								{cartItems.map((item) => (
 									<CartItem key={item._id} item={item} />
 								))}
 							</div>
 						)}
-						{getCartProducts.length > 0 && <PeopleAlsoBought />}
+						{cartItems.length > 0 && <PeopleAlsoBought />}
 					</motion.div>
 
-					{getCartProducts.length > 0 && (
+					{cartItems.length > 0 && (
 						<motion.div
 							className='mx-auto mt-6 max-w-4xl flex-1 space-y-6 lg:mt-0 lg:w-full'
 							initial={{ opacity: 0, x: 20 }}

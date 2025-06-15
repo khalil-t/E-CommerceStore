@@ -6,6 +6,6 @@ const router = express.Router()
 router.get("/getCartProducts",protectRoute, getCartProducts)
 router.post("/addToCart",protectRoute, addToCart)
 router.delete("/removeAllFromCart/:productId",protectRoute, removeAllFromCart)
-router.post("/updateQuantity/:id",protectRoute, updateQuantity)
+router.patch("/updateQuantity/:id",protectRoute, updateQuantity)
 
 export default router

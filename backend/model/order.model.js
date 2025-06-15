@@ -31,10 +31,7 @@ const orderSchema = new mongoose.Schema(
 			required: true,
 			min: 0,
 		},
-		stripeSessionId: {
-			type: String,
-			unique: true,
-		},
+		
 		status: {
 			type: String,
 			enum: ["pending", "paid", "failed", "canceled"], // Allowed statuses

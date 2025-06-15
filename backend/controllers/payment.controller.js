@@ -34,11 +34,9 @@ const newOrder= new Order({
 })
 await newOrder.save();
 
-
 if(totalAmount>= 200){
     await createNewCoupon(req.user._id);
 }
-
 
 res.status(200).json({
     success: true,
@@ -47,14 +45,7 @@ res.status(200).json({
     finalPrice: totalAmount,
 });
 
-
-
-
 }
-
-
-
-
 
 
 catch(error){
@@ -62,6 +53,13 @@ catch(error){
      res.status(500).json({ message: "Server error", error: error.message });
     }
 }
+
+
+
+
+
+
+
 
 async function createNewCoupon(userId) {
     await Coupon.findOneAndDelete({userId})

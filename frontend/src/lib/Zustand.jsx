@@ -50,7 +50,32 @@ const useUser = create(
           console.error('toggleFeaturedInStore: currentList is not an array:', currentList);
         }
       },
+
+      // --- cartItems state ---
+      cartItems: [],
+      setCartItems: (items) => set({ cartItems: items }),
+
+      updateCart: (productId, quantity) => {
+        const updatedCart = get().cartItems.map(item =>
+          item._id === productId ? { ...item, quantity } : item
+        );
+        set({ cartItems: updatedCart });
+      },
+      deleteCartItem: (productId) => {
+        const updatedCart = get().cartItems.filter(item => item._id !== productId);
+        set({ cartItems: updatedCart });
+      },
+      // --- Num state ---
+
+      num: 0,
+      setNum: (count) => set({ num: count }),
+      increment: () => set((state) => ({ num: state.num + 1 })),
+      decrement: () => set((state) => ({
+        num: state.num > 0 ? state.num - 1 : 0
+      })),
+      resetNum: () => set({ num: 0 }),
     }),
+
     {
       name: 'user-storage',
       partialize: (state) => ({
