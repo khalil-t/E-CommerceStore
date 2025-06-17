@@ -5,20 +5,27 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 
 const AnalyticsTab = () => {
 	const [analyticsData, setAnalyticsData] = useState({
-		users: 0,
-		products: 0,
+		
+numUsers: 0,
+		numProduts: 0,
 		totalSales: 0,
 		totalRevenue: 0,
 	});
 	const [isLoading, setIsLoading] = useState(true);
 	const [dailySalesData, setDailySalesData] = useState([]);
 
-	useEffect(() => {
+
+		useEffect(() => {
+
 		const fetchAnalyticsData = async () => {
 			try {
-				const response = await axios.get("/analytics");
-				setAnalyticsData(response.data.analyticsData);
-				setDailySalesData(response.data.dailySalesData);
+				 const response = await fetch(import.meta.env.VITE_APP_GETANALYTICSDATA, {
+        method: "GET",
+      headers: { "Content-Type": "application/json" },
+      credentials: 'include',
+      });
+      const data= await response.json()
+				setAnalyticsData(data);
 			} catch (error) {
 				console.error("Error fetching analytics data:", error);
 			} finally {
@@ -26,8 +33,35 @@ const AnalyticsTab = () => {
 			}
 		};
 
-		fetchAnalyticsData();
+				fetchAnalyticsData();
+
+	    const fetchDailySales=async()=>{
+				try {
+				 const response = await fetch(import.meta.env.VITE_APP_DAILYSALES, {
+        method: "GET",
+      headers: { "Content-Type": "application/json" },
+      credentials: 'include',
+      });
+      const data= await response.json()
+	  console.log(data)
+				setDailySalesData(
+					data.salesData.map((item) => ({
+				name: item.date, 
+				sales: item.sales,
+				revenue: item.revenue,
+			}))
+				);
+			} catch (error) {
+				console.error("Error fetching analytics data:", error);
+			} finally {
+				setIsLoading(false);
+			}
+		}
+fetchDailySales()
 	}, []);
+
+
+
 
 	if (isLoading) {
 		return <div>Loading...</div>;
@@ -38,26 +72,30 @@ const AnalyticsTab = () => {
 			<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8'>
 				<AnalyticsCard
 					title='Total Users'
-					value={analyticsData.users.toLocaleString()}
 					icon={Users}
 					color='from-emerald-500 to-teal-700'
+							value={analyticsData.numUsers}
+
 				/>
 				<AnalyticsCard
 					title='Total Products'
-					value={analyticsData.products.toLocaleString()}
 					icon={Package}
 					color='from-emerald-500 to-green-700'
+							value={analyticsData.numProduts}
+
 				/>
 				<AnalyticsCard
 					title='Total Sales'
-					value={analyticsData.totalSales.toLocaleString()}
 					icon={ShoppingCart}
 					color='from-emerald-500 to-cyan-700'
+							value={analyticsData.totalSales}
+
 				/>
 				<AnalyticsCard
 					title='Total Revenue'
-					value={`$${analyticsData.totalRevenue.toLocaleString()}`}
 					icon={DollarSign}
+							value={`$${analyticsData.totalRevenue.toFixed(2)}`}
+
 					color='from-emerald-500 to-lime-700'
 				/>
 			</div>

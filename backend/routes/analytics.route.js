@@ -5,6 +5,6 @@ const router = express.Router()
 
 router.get("/summary", getAnalyticsData);
 
-router.post("/daily-sales", getDailySalesData);
+router.get("/daily-sales", getDailySalesData);
 
 export default router

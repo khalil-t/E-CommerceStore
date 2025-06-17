@@ -1,11 +1,33 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-
+import useProductStore from "../stores/useProductStore"
+import useUser from "../lib/Zustand";
 const GiftCouponCard = () => {
 	const [userInputCode, setUserInputCode] = useState("");
-
+//get coupon , set code , remove coupon 
 	
-let isCouponApplied 
+const {getCoupon,creatCoupon,validateCoupon}=useProductStore()
+
+const { voucherCode, setVoucherCode } = useUser();
+
+
+useEffect(()=>{
+const fetchData=async()=>{
+	const data = await getCoupon();
+}
+fetchData();
+},[])
+
+const handleSubmit=async(e,voucherCode)=>{
+	console.log(voucherCode)
+	if (!voucherCode) {
+			alert("Please enter a voucher code");
+			return;
+		}
+		await validateCoupon(voucherCode);
+}
+console.log(voucherCode)
+
 let coupon
 	return (
 		<motion.div
@@ -26,7 +48,8 @@ let coupon
             p-2.5 text-sm text-white placeholder-gray-400 focus:border-emerald-500 
             focus:ring-emerald-500'
 						placeholder='Enter code here'
-			
+			 value={voucherCode}
+  onChange={(e) => setVoucherCode(e.target.value)}
 						required
 					/>
 				</div>
@@ -36,31 +59,12 @@ let coupon
 					className='flex w-full items-center justify-center rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-300'
 					whileHover={{ scale: 1.05 }}
 					whileTap={{ scale: 0.95 }}
+					onClick={(e)=>handleSubmit(e,voucherCode)}
 				>
 					Apply Code
 				</motion.button>
 			</div>
-			{isCouponApplied && coupon && (
-				<div className='mt-4'>
-					<h3 className='text-lg font-medium text-gray-300'>Applied Coupon</h3>
-
-					<p className='mt-2 text-sm text-gray-400'>
-					</p>
-
-					<motion.button
-						type='button'
-						className='mt-2 flex w-full items-center justify-center rounded-lg bg-red-600 
-            px-5 py-2.5 text-sm font-medium text-white hover:bg-red-700 focus:outline-none
-             focus:ring-4 focus:ring-red-300'
-						whileHover={{ scale: 1.05 }}
-						whileTap={{ scale: 0.95 }}
-				
-					>
-						Remove Coupon
-					</motion.button>
-				</div>
-			)}
-
+		
 			{coupon && (
 				<div className='mt-4'>
 					<h3 className='text-lg font-medium text-gray-300'>Your Available Coupon:</h3>

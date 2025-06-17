@@ -8,6 +8,8 @@ const useProductStore =()=>{
 	const setProductList = useUser((state) => state.setProductList);
 	const UpdateProduct = useUser((state) => state.UpdateProduct);
     const toggleFeaturedInStore = useUser((state) => state.toggleFeaturedInStore);
+const { voucherCode, setVoucherCode } = useUser();
+
 
 const getAllProducts=async()=>{
 try{
@@ -105,6 +107,8 @@ const getProductsByCategory=async(category)=>{
 }
 
 
+
+
 const getRecommendedProducts =async()=>{
 try{
     const response = await fetch(import.meta.env.VITE_APP_recommended, {
@@ -139,6 +143,49 @@ const toggleFeaturedProduct =async(toggle)=>{
     }
 }
 
-return{getAllProducts,getFeaturedProducts , createProduct , deleteProduct , getProductsByCategory , getRecommendedProducts ,toggleFeaturedProduct}
+
+const getCoupon=async()=>{
+    try{
+    const response = await fetch(import.meta.env.VITE_APP_GETCOUPON, {
+        method: "GET",
+      headers: { "Content-Type": "application/json" },
+      credentials: 'include',
+      });
+      const data= await response.json()
+      console.log(data)
+}
+catch(error){
+    console.log("Error in getCoupon:", error.message);
+}
+}
+
+
+const validateCoupon=async(code)=>{
+
+    try{
+    const response = await fetch(import.meta.env.VITE_APP_VALIDATE, {
+        method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: 'include',
+              body: JSON.stringify({ code}),
+
+      });
+      const data= await response.json()
+      console.log(data.totalAmount)
+      setVoucherCode(data.totalAmount)
+      console.log(voucherCode)
+
+}
+catch(error){
+    console.log("Error in getCoupon:", error.message);
+}
+}
+
+ 
+
+
+
+return{getAllProducts,getFeaturedProducts , createProduct , deleteProduct , getProductsByCategory ,
+     getRecommendedProducts ,toggleFeaturedProduct ,getCoupon,validateCoupon}
 }
 export default useProductStore

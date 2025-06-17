@@ -74,6 +74,9 @@ const useUser = create(
         num: state.num > 0 ? state.num - 1 : 0
       })),
       resetNum: () => set({ num: 0 }),
+         // --- Coupon Voucher Code ---
+      voucherCode: "",
+      setVoucherCode: (code) => set({ voucherCode: code }),
     }),
 
     {

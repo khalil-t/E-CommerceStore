@@ -3,12 +3,14 @@ import { Link } from "react-router-dom";
 import { MoveRight } from "lucide-react";
 import axios from "../lib/axios";
 import UseCartStore from "../stores/useCartStore.jsx"
+import useProductStore from "../stores/useProductStore.jsx"
 import { useEffect } from "react";
 import React, {  useState } from "react";
 import useUser from "../lib/Zustand.jsx";
 const OrderSummary = () => {
 	const productList = useUser((state) => state.productList);
 		const cartItems = useUser((state) => state.cartItems);
+const { voucherCode, setVoucherCode } = useUser();
 
 
 let savings 
@@ -16,15 +18,17 @@ let savings
 let formattedTotal 
 
 const [CheckoutSession , setCheckoutSession]=useState()
+const [Validation , setValidation]=useState()
 
 
 const{createCheckoutSession} = UseCartStore()
 
-
 useEffect(()=>{
 const fetchData=async()=>{
+	console.log(cartItems)
 	const data = await createCheckoutSession(cartItems);
-	setCheckoutSession(data);
+	setValidation(data);
+	setCheckoutSession(data)
 }
 fetchData();
 },[cartItems])

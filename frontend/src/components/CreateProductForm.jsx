@@ -12,7 +12,6 @@ const CreateProductForm = () => {
 	const UpdateProduct = useUser((state) => state.deleteProduct);
 	
 	useEffect(() => {
-		console.log("Updated product list:", productList);
 	  }, [productList]);
 
 	const {createProduct}=useProductStore()

@@ -12,19 +12,7 @@ let totalAmount = 0 ;
  products.forEach((product)=>{
     totalAmount+=product.price * product.quantity;
 })
-let coupon = null
-if(couponCode){
-     coupon = await Coupon.findOne({
-    code: couponCode, 
-    userId: req.user._id,  
-    isActive: true,     
-    expirationDate: { $gt: new Date() } 
-})}
 
-
-if(coupon){
-totalAmount-=(totalAmount * coupon.discountPercentage) / 100
-}
 
 const newOrder= new Order({
     user: req.user._id,  

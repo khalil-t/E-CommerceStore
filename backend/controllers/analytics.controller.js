@@ -30,9 +30,10 @@ res.status(200).json({
 }
 
 
-export const getDailySalesData=async(startDate, endDate)=>{
+export const getDailySalesData=async(req, res)=>{
 try{
-    const { startDate, endDate } = req.body; 
+const startDate = new Date("2025-06-01T00:00:00Z");
+const endDate = new Date(); 
 
     const orders = await Order.find({
     createdAt: { $gte: startDate, $lte: endDate}
@@ -86,13 +87,6 @@ catch(error){
     
     }
 }
-
-
-
-
-
-
-
 
 
 
