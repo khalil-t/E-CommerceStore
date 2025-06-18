@@ -106,45 +106,103 @@ npm run dev
 > **Backend** ➝ http://localhost:7000
 
 ---
-
 ## 📁 Project Structure
 
 ```
 E-CommerceStore/
 │
-├── backend/                 # Express + MongoDB API
-│   ├── controllers/
-│   ├── models/
-│   ├── routes/
-│   ├── middleware/
-│   ├── config/              # DB config
-│   ├── analytics/           # (optional) Sales logic
-│   └── server.js
+├── backend/                         # Express + MongoDB backend
+│   ├── controllers/                 # Controller logic
+│   │   ├── analytics.controller.js
+│   │   ├── auth.controller.js
+│   │   ├── cart.controller.js
+│   │   ├── coupon.controller.js
+│   │   ├── payment.controller.js
+│   │   └── product.controller.js
+│   │
+│   ├── lib/                         # Helper functions / configs
+│   │
+│   ├── middleware/                  # Middleware (auth, error handling, etc.)
+│   │
+│   ├── models/                      # Mongoose models
+│   │   ├── coupon.model.js
+│   │   ├── order.model.js
+│   │   ├── product.model.js
+│   │   └── user.model.js
+│   │
+│   ├── routes/                      # API route definitions
+│   │   ├── analytics.route.js
+│   │   ├── auth.route.js
+│   │   ├── cart.route.js
+│   │   ├── coupon.route.js
+│   │   ├── payment.route.js
+│   │   └── product.route.js
+│   │
+│   └── server.js                    # Main server entry point
 │
-├── frontend/                # React client
+├── frontend/                        # React frontend
 │   ├── public/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── context/
-│   │   ├── utils/
-│   │   ├── App.jsx
-│   │   └── main.jsx
-│   └── index.css
+│   │   └── index.html               # Main HTML template
+│   │
+│   ├── src/                         # React source files
+│   │   ├── components/              # Reusable UI components
+│   │   │   ├── AnalyticsTab.jsx
+│   │   │   ├── CartItem.jsx
+│   │   │   ├── CategoryItem.jsx
+│   │   │   ├── CreateProductForm.jsx
+│   │   │   ├── FeaturedProducts.jsx
+│   │   │   ├── GiftCouponCard.jsx
+│   │   │   ├── LoadingSpinner.jsx
+│   │   │   ├── Navbar.jsx
+│   │   │   ├── OrderSummary.jsx
+│   │   │   ├── PeopleAlsoBought.jsx
+│   │   │   ├── ProductCard.jsx
+│   │   │   └── ProductsList.jsx
+│   │   │
+│   │   ├── lib/                     # API helpers
+│   │   │   
+│   │   │
+│   │   ├── pages/                   # Route pages
+│   │   │   ├── AdminPage.jsx
+│   │   │   ├── CartPage.jsx
+│   │   │   ├── CategoryPage.jsx
+│   │   │   ├── HomePage.jsx
+│   │   │   ├── LoginPage.jsx
+│   │   │   ├── PurchaseCancelPage.jsx
+│   │   │   ├── PurchaseSuccessPage.jsx
+│   │   │   └── SignUpPage.jsx
+│   │   │
+│   │   ├── stores/                  # Zustand stores (global state)
+│   │   │   ├── useCartStore.js
+│   │   │   ├── useProductStore.js
+│   │   │   └── useUserStore.js
+│   │   │
+│   │   ├── App.jsx                  # Main app component
+│   │   ├── main.jsx                 # React root entry
+│   │   └── index.css                # Tailwind and global styles
+│   │
+│   └── README.md                    # Frontend-specific README (optional)
 │
 ├── .gitignore
-├── README.md
+├── LICENSE
+├── README.md                        # Root README
+├── eslint.config.js
 ├── package.json
-├── vite.config.js
+├── package-lock.json
+├── postcss.config.js
+├── tailwind.config.js
+└── vite.config.js
 ```
+
 
 ---
 
 ## 🖼️ Website Preview
 
-| Admin Dashboard | Product List |
-|-----------------|--------------|
-| ![Admin](./screenshots/admin-dashboard.png) | ![Products](./screenshots/product-list.png) |
+![Website Screenshot](./screen/github.PNG)
+![Website Screenshot](./screen/github1.PNG)
+![Website Screenshot](./screen/github2.PNG)
+![Website Screenshot](./screen/github3.PNG)
 
 ---
 
@@ -155,8 +213,6 @@ E-CommerceStore/
 - 🔜 Payment integration (Stripe / PayPal)
 - 🔜 Order history
 - 🔜 Cart system
-- 🔜 Admin role management
-- 🔜 Product categories & search filter
 - 🔜 Notifications system (via WebSockets)
 
 ---
