@@ -1,40 +1,27 @@
-import User from "../../../backend/model/user.model";
-
 
 
 const useUserStore=()=>{
 
-const Login=async(Login)=>{
+const Login=async(credentials)=>{
 
-    try{
-const {Email , Password}=Login
+const {email , password}=credentials
 const response = await fetch(import.meta.env.VITE_APP_LOGIN_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: 'include', 
-    body: JSON.stringify({ Email , Password }),
+    body: JSON.stringify({ email , password }),
   });
 
   if (!response.ok) {
-    throw new Error('Failed to sign up');
+    const error = await response.json();
+    throw new Error(error.error || "Failed to log in");
   }
 
   const data= await response.json()
-  console.log(data)
-  
-
+  return data;
 }
-    catch (error) {
-        console.log("Error in login:", error.message);
-      }
-    
-    
-    
-    }
-
 
 const Signup=async(Signup)=>{
-try{
   const {	name,
 		email,
 		password,
@@ -49,17 +36,13 @@ try{
         confirmPassword}),
     });
   
-    if (!response.ok) {
-      throw new Error('Failed to sign up');
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to sign up");
     }
   
-    const data= await response.json()
-
-
-}
-catch (error) {
-  console.log("Error in Signup:", error.message);
-}
+  const data= await response.json()
+  return data;
 
 }
 
@@ -70,32 +53,31 @@ try {
     headers: { "Content-Type": "application/json" },
   credentials: 'include',
   });
-  const data= await response.json()
-  console.log(data)
+  await response.json()
 }
 catch (error) {
-  console.log("Error in logout:", error.message);
+    console.log("Error in logout:", error.message);
 }
 }
-
 
 const getUser=async()=>{
 try{
-  const response = await fetch(import.meta.env.VITE_APP_GETALLUSERS_URL, {
+  const response = await fetch(import.meta.env.VITE_APP_ME_URL, {
     method: "GET",
   headers: { "Content-Type": "application/json" },
   credentials: 'include',
   });
 
   if (!response.ok) {
-    throw new Error('Failed to sign up');
+    return null;
   }
 
   const data= await response.json()
 return data
 }
 catch (error) {
-  console.log("Error :", error.message);
+    console.log("Error in getUser:", error.message);
+    return null;
 }
 }
 

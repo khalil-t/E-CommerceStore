@@ -1,5 +1,4 @@
-import { data, Navigate, Route, Routes } from "react-router-dom";
-import React from 'react';
+import { Navigate, Route, Routes } from "react-router-dom";
 
 import HomePage from "./pages/HomePage";
 import SignUpPage from "./pages/SignUpPage";
@@ -10,7 +9,7 @@ import CategoryPage from "./pages/CategoryPage";
 import Navbar from "./components/Navbar";
 import { Toaster } from "react-hot-toast";
 
-import { useEffect , useState } from "react";
+import { useEffect } from "react";
 import LoadingSpinner from "./components/LoadingSpinner";
 import CartPage from "./pages/CartPage";
 
@@ -20,9 +19,37 @@ import useUserStore from "./stores/useUserStore";
  import useUser from "./lib/Zustand";
 function App() {
 	const setUser = useUser((state) => state.setUser);  
+	const clearUser = useUser((state) => state.clearUser);
 	const user = useUser((state) => state.user);
+	const isAuthChecked = useUser((state) => state.isAuthChecked);
 const {getUser}= useUserStore()
 
+	useEffect(() => {
+		const restoreSession = async () => {
+			const sessionUser = await getUser();
+			if (sessionUser) {
+				setUser(sessionUser);
+			} else {
+				clearUser();
+			}
+			useUser.getState().setIsAuthChecked(true);
+		};
+
+		restoreSession();
+	}, []);
+
+	const requireAdmin = ({ children }) => {
+		if (!isAuthChecked) return <LoadingSpinner />;
+		if (!user) return <Navigate to='/login' />;
+		if (user.role !== 'admin') return <Navigate to='/' />;
+		return children;
+	};
+
+	const requireUser = ({ children }) => {
+		if (!isAuthChecked) return <LoadingSpinner />;
+		if (!user) return <Navigate to='/login' />;
+		return children;
+	};
 
 	return (
 		<div className='min-h-screen bg-gray-900 text-white relative overflow-hidden'>
@@ -39,17 +66,14 @@ const {getUser}= useUserStore()
 					<Route path='/' element={<HomePage />} />
 					<Route path='/signup' element={!user ? <SignUpPage /> : <Navigate to='/' />} />
 					<Route path='/login' element={!user ? <LoginPage /> : <Navigate to='/' />} />
-					<Route
-						path='/secret-dashboard'
-						element={user?.role === "admin" ? <AdminPage /> : <Navigate to='/login' />}
-					/>
+					<Route path='/secret-dashboard' element={requireAdmin({ children: <AdminPage /> })} />
 					<Route path='/category/:category' element={<CategoryPage />} />
-					<Route path='/cart' element={user ? <CartPage /> : <Navigate to='/login' />} />
+					<Route path='/cart' element={requireUser({ children: <CartPage /> })} />
 					<Route
 						path='/purchase-success'
-						element={user ? <PurchaseSuccessPage /> : <Navigate to='/login' />}
+						element={requireUser({ children: <PurchaseSuccessPage /> })}
 					/>
-					<Route path='/purchase-cancel' element={user ? <PurchaseCancelPage /> : <Navigate to='/login' />} />
+					<Route path='/purchase-cancel' element={requireUser({ children: <PurchaseCancelPage /> })} />
 				</Routes>
 			</div>
 			<Toaster />

@@ -9,6 +9,9 @@ const useUser = create(
       setUser: (userData) => set({ user: userData }),
       clearUser: () => set({ user: null }),
 
+      isAuthChecked: false,
+      setIsAuthChecked: (checked) => set({ isAuthChecked: checked }),
+
       // --- PRODUCTS state ---
       productList: [],
 

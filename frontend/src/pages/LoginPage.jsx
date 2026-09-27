@@ -1,27 +1,36 @@
-import { useState , useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import { LogIn, Mail, Lock, ArrowRight, Loader } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Mail, Lock, ArrowRight, Loader, UserPlus } from "lucide-react";
 import useUser from "../lib/Zustand";
-import { Input } from "postcss";
-import { UserPlus } from "lucide-react";
+import toast from "react-hot-toast";
 import useUserStore from "../stores/useUserStore";
 const LoginPage = () => {
 //set
 	const setUser = useUser((state) => state.setUser);  
+	const navigate = useNavigate();
 
 	const {Login}= useUserStore()
+const [loading, setLoading] = useState(false)
 const [LogInData , setLogIn]= useState({
-	Password:"",
-	Email :""
+		Password:"",
+		Email :""
 })
 
-const handlesubmit =async(e)=>{
+const handlesubmit=async(e)=>{
 e.preventDefault()
-console.log(LogInData)
+setLoading(true)
 
-await Login(LogInData)
-setUser(formData)
+	try {
+		const data = await Login({ email: LogInData.Email, password: LogInData.Password })
+		setUser(data)
+		toast.success("Logged in successfully")
+		navigate("/")
+	} catch (error) {
+		toast.error(error.message)
+	} finally {
+		setLoading(false)
+	}
 
 }
 
@@ -91,16 +100,17 @@ setUser(formData)
 						</div>
 
 						<button
-							type='submit'
+							type="submit"
+							disabled={loading}
 							className='w-full flex justify-center py-2 px-4 border border-transparent 
 							rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600
 							 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2
 							  focus:ring-emerald-500 transition duration-150 ease-in-out disabled:opacity-50'
-					onClick={(e)=>{handlesubmit(e)}}
+						onClick={(e)=>{handlesubmit(e)}}
 						>
-																<UserPlus className='mr-2 h-5 w-5' aria-hidden='true' />
+							{loading ? <Loader className="mr-2 h-5 w-5 animate-spin" /> : <UserPlus className="mr-2 h-5 w-5" aria-hidden="true" />}
 
-						Login
+							{loading ? "Logging in..." : "Login"}
 						</button>
 					</form>
 

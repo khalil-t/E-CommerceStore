@@ -1,7 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
+import { fileURLToPath } from "url";
 import { connectDB } from "./lib/db.js";
-dotenv.config();
+dotenv.config({ path: fileURLToPath(new URL("./.env", import.meta.url)) });
 
 
 import analyticsRoutes from "./routes/analytics.route.js";

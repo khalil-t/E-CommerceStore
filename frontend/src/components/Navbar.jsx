@@ -1,9 +1,9 @@
 import { ShoppingCart, UserPlus, LogIn, LogOut, Lock } from "lucide-react";
-import { data, Link } from "react-router-dom";
-import useUserStore from "../stores/useUserStore";
+import { Link } from "react-router-dom";
+import useUserStore from "../stores/useUserStore"
 import usUseCartStore from "../stores/useCartStore.jsx"
 import useUser from "../lib/Zustand.jsx"
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 
 
@@ -25,9 +25,10 @@ fetchData();
 
 	const setUser = useUser((state) => state.setUser);  
 	const user = useUser((state) => state.user);
+	const isAuthChecked = useUser((state) => state.isAuthChecked);
     const clearUser = useUser((state)=>state.clearUser)
 
-	const isAdmin = user?.role === "admin";
+	const isAdmin = isAuthChecked && user?.role === "admin";
 	return (
 		<header className='fixed top-0 left-0 w-full bg-gray-900 bg-opacity-90 backdrop-blur-md shadow-lg z-40 transition-all duration-300 border-b border-emerald-800'>
 		<div className='container mx-auto px-4 py-3'>

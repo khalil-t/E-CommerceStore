@@ -1,34 +1,41 @@
-import { useState , useEffect} from "react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { UserPlus, Mail, Lock, User, ArrowRight, Loader } from "lucide-react";
 import { motion } from "framer-motion";
+import toast from "react-hot-toast";
 import useUserStore from "../stores/useUserStore";
 import useUser from "../lib/Zustand";
-import React from 'react';
 
 const SignUpPage = () => {
 	//set
 	const setUser = useUser((state) => state.setUser);  
-	const user = useUser((state) => state.user);
+	const navigate = useNavigate();
 
+	const [loading, setLoading] = useState(false)
 	const [formData, setFormData] = useState({
 		name: "",
 		email: "",
 		password: "",
-		confirmPassword: "",
-		role:"admin"
+		confirmPassword: ""
 	});
 
-	const { Signup, loading } = useUserStore();
+	const { Signup } = useUserStore();
 
 	const handlesubmit =async(e)=>{
 		e.preventDefault()
-		await Signup(formData)
-		setUser(formData)
+		setLoading(true)
+
+		try {
+			const data = await Signup(formData)
+			setUser(data)
+			toast.success("Account created successfully")
+			navigate("/")
+		} catch (error) {
+			toast.error(error.message)
+		} finally {
+			setLoading(false)
 		}
-		useEffect(() => {
-			console.log('User stored in Zustand:', user);
-		  }, [user]); 
+		}
 
 	return (
 		<div className='flex flex-col justify-center py-12 sm:px-6 lg:px-8'>
@@ -147,8 +154,8 @@ const SignUpPage = () => {
 						>
 
 								<>
-									<UserPlus className='mr-2 h-5 w-5' aria-hidden='true' />
-									Sign up
+									{loading ? <Loader className='mr-2 h-5 w-5 animate-spin' /> : <UserPlus className='mr-2 h-5 w-5' aria-hidden='true' />}
+									{loading ? "Creating account..." : "Sign up"}
 								</>
 							
 						</button>
