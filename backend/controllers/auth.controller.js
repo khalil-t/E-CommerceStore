@@ -1,10 +1,21 @@
 import User from "../model/user.model.js"
 import generateTokenAndSetCookie from "../util/generateToken.js"
 
+
+const publicUser = (user) => ({
+	_id: user._id,
+    fullname: user.name,
+    role: user.role,
+});
+
 export const signup = async(req , res)=>{
 
     try{
-        const {name ,email , password , confirmPassword,role} = req.body
+  
+        const {name ,email , password , confirmPassword} = req.body
+if (!name || !email || !password || !confirmPassword){
+    return res.status(400).json({error :'All fields are required' })
+}
 if (password != confirmPassword){
     return res.status(400).json({error :'Passwords do not match' })
 }
@@ -13,15 +24,10 @@ const find = await User.findOne({email})
 if(find){
    return res.status(409).json({error : "Username already exists"})
 }
-const NewUser = new User({ name, email, password })
+const NewUser = new User({ name, email, password, role: "customer" })
 await NewUser.save()
 const token =generateTokenAndSetCookie(NewUser._id.toString(),res)
-res.status(200).json({
-	_id: NewUser._id,
-    fullname: NewUser.name,
-    role: NewUser.role,
-				
-})
+res.status(200).json(publicUser(NewUser))
     }
     catch(error){
         console.error('Signup error:', error);
@@ -46,12 +52,7 @@ if(!newuser || !(await newuser.comparePassword(password))){
 
 generateTokenAndSetCookie(newuser._id, res )
 
-res.status(200).json({
-    _id: newuser._id,
-    fullname: newuser.name,
-    role: newuser.role,
-		
-})
+res.status(200).json(publicUser(newuser))
 
 
 
@@ -82,7 +83,8 @@ catch(error){
 
 export const getUserProfile=async(req,res)=>{
         try {
-            res.status(200).json(req.user)
+       
+            res.status(200).json(publicUser(req.user))
         }
         catch(error){
             console.log("Error getUserProfile", error.message);

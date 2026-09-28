@@ -46,6 +46,14 @@ const orderSchema = new mongoose.Schema(
 	{ timestamps: true }
 );
 
+// A user has at most one active checkout. Enforced by the database rather than by
+// the controller, so two concurrent checkout requests cannot both insert a pending
+// order no matter how the read-then-write in the controller interleaves.
+orderSchema.index({ user: 1 }, {
+	unique: true,
+	partialFilterExpression: { status: "pending" },
+});
+
 const Order = mongoose.model("Order", orderSchema);
 
 export default Order;

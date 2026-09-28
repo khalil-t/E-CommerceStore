@@ -106,30 +106,52 @@ catch (error) {
   }
 };
 
-const createCheckoutSession=async(cartItems)=>{
-try{
-  let products =cartItems.map((item) => ({
-  product: item._id,      
-  quantity: item.quantity 
+// Read-only. Asks the backend to price the cart from the database. Safe to call
+// on every render or cart change: it creates no Order.
+const getCheckoutQuote=async(cartItems)=>{
+  const products =cartItems.map((item) => ({
+  product: item._id,
+  quantity: item.quantity
 }));
-  const couponCode="fffff";
 
+    const response = await fetch(import.meta.env.VITE_APP_CHECKOUT_QUOTE, {
+        method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: 'include',
+      body: JSON.stringify({products}),
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || "Failed to get the cart total");
+    }
+
+    return await response.json()
+}
+
+// Creates checkout state. Must only be called from an explicit user action.
+const createCheckoutSession=async(cartItems)=>{
+  const products =cartItems.map((item) => ({
+  product: item._id,
+  quantity: item.quantity
+}));
 
     const response = await fetch(import.meta.env.VITE_APP_CHECKOUT, {
         method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: 'include',
-      body: JSON.stringify({products, couponCode}),
-
+      body: JSON.stringify({products}),
       });
-      const data= await response.json()
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || "Failed to start checkout");
+    }
+
+    const data= await response.json()
 return data
 }
-catch (error) {
-    console.log("Error in getCartProducts:", error.message);
-}
-}
 
- return{getCartProducts , addToCart , removeAllFromCart , updateQuantity,fetchRecommendedProducts , createCheckoutSession}   
+ return{getCartProducts , addToCart , removeAllFromCart , updateQuantity,fetchRecommendedProducts , getCheckoutQuote, createCheckoutSession}   
 }
 export default UseCartStore

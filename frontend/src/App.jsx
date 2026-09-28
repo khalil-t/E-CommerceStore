@@ -38,6 +38,7 @@ const {getUser}= useUserStore()
 		restoreSession();
 	}, []);
 
+
 	const requireAdmin = ({ children }) => {
 		if (!isAuthChecked) return <LoadingSpinner />;
 		if (!user) return <Navigate to='/login' />;

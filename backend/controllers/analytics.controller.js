@@ -5,8 +5,11 @@ export const getAnalyticsData = async (req, res)=>{
 const  numProducts  = await Product.countDocuments()
 const  numUsers = await User.countDocuments()
 
+// Only paid orders represent real sales and revenue. Pending orders are abandoned
+// or in-flight checkout attempts and must never inflate these numbers.
 const numSales= await Order.aggregate([
- {   $group: {
+    { $match: { status: "paid" } },
+    {   $group: {
         _id: null, 
         totalSales: { $sum: 1 }, 
         totalRevenue: { $sum: "$totalAmount" }, 
@@ -36,12 +39,14 @@ const startDate = new Date("2025-06-01T00:00:00Z");
 const endDate = new Date(); 
 
     const orders = await Order.find({
+    status: "paid",
     createdAt: { $gte: startDate, $lte: endDate}
 });
 
 const salesData = await Order.aggregate([
     {
         $match: {
+            status: "paid",
             createdAt: {
                 $gte: startDate,
                 $lte: endDate,
