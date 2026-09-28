@@ -1,39 +1,31 @@
-import jwt from 'jsonwebtoken';
-import User from '../model/user.model.js';
+import User from "../model/user.model.js";
+import { verifyAuthToken, ACCESS_COOKIE } from "../util/generateToken.js";
 
 const protectRoute = async (req, res, next) => {
     try {
-
-        const token = req.cookies.jwt;
-        if (!token) {
-            return res.status(401).json({ error: "Unauthorized - No Token Provided" });
-        }
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = verifyAuthToken(req.cookies[ACCESS_COOKIE], "access");
 
         if (!decoded) {
-            return res.status(401).json({ error: "Unauthorized - Invalid Token" });
+            return res.status(401).json({ error: "Unauthorized - Invalid or Expired Token" });
         }
 
         const finduser = await User.findOne({ _id: decoded.userId }).select("-password");
 
         if (!finduser) {
-            console.log("User not found with ID:", decoded.userId);
             return res.status(401).json({ error: "Unauthorized - User Not Found" });
+        }
+
+        // The role is always taken from this database document, never from the
+        // token or the request, so it cannot be forged and reflects changes
+        // (including promotion, demotion and logout revocation) immediately.
+        if ((decoded.tokenVersion ?? 0) !== (finduser.tokenVersion ?? 0)) {
+            return res.status(401).json({ error: "Unauthorized - Session Revoked" });
         }
 
         req.user = finduser;
         next();
     } catch (error) {
-        if (error.name === "TokenExpiredError") {
-            return res.status(401).json({ error: "Unauthorized - Token Expired" });
-        }
-
-        if (error.name === "JsonWebTokenError") {
-            return res.status(401).json({ error: "Unauthorized - Invalid Token" });
-        }
-
-        console.log("Error in protectRoute middleware:", error.message);
+        console.error("Error in protectRoute middleware:", error.message);
         res.status(500).json({ error: "Internal server error" });
     }
 };

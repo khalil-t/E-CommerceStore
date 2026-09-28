@@ -32,12 +32,47 @@ app.use(cors(corsOptions));
 
 app.use(express.json({ limit: '10mb' })); // or higher if needed
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Reject oversized or malformed bodies before they reach a route, with JSON
+// rather than Express's default HTML page.
+app.use((err, req, res, next) => {
+    if (!err) return next();
+
+    if (err.type === "entity.parse.failed" || err instanceof SyntaxError) {
+        return res.status(400).json({ error: "Malformed JSON body" });
+    }
+
+    if (err.type === "entity.too.large") {
+        return res.status(413).json({ error: "Request body too large" });
+    }
+
+    console.error("Unhandled request error:", err.message);
+    res.status(err.status || 500).json({ error: "Server error" });
+});
+
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/coupons", couponRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/products", productRoutes);
+
+app.use((req, res) => {
+    res.status(404).json({ error: "Not found" });
+});
+
+// Final error handler. Must be registered last. Never returns a stack trace or
+// a filesystem path: the default Express handler leaks the absolute server path
+// and the full call stack to the client.
+app.use((err, req, res, next) => {
+    console.error(err);
+
+    const isProduction = process.env.NODE_ENV === "production";
+
+    res.status(err.status || 500).json({
+        error: isProduction ? "Server error" : err.message,
+    });
+});
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);

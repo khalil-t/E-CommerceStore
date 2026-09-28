@@ -36,6 +36,14 @@ const userSchema = new mongoose.Schema(
 			enum: ["customer", "admin"],
 			default: "customer",
 		},
+
+		// Bumped on logout to revoke every JWT already issued for this user.
+		// Tokens embed the value they were signed with, so a mismatch invalidates
+		// them without needing to store a list of tokens.
+		tokenVersion: {
+			type: Number,
+			default: 0,
+		},
 	},
 	{
 		timestamps: true,

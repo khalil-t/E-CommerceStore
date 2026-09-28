@@ -12,17 +12,17 @@ const LoginPage = () => {
 
 	const {Login}= useUserStore()
 const [loading, setLoading] = useState(false)
-const [LogInData , setLogIn]= useState({
-		Password:"",
-		Email :""
-})
+	const [logInData , setLogIn]= useState({
+		password:"",
+		email :""
+	})
 
-const handlesubmit=async(e)=>{
-e.preventDefault()
-setLoading(true)
+	const handlesubmit=async(e)=>{
+	e.preventDefault()
+	setLoading(true)
 
 	try {
-		const data = await Login({ email: LogInData.Email, password: LogInData.Password })
+		const data = await Login({ email: logInData.email, password: logInData.password })
 		setUser(data)
 		toast.success("Logged in successfully")
 		navigate("/")
@@ -43,7 +43,7 @@ setLoading(true)
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.8 }}
 			>
-				<h2 className='mt-6 text-center text-3xl font-extrabold text-emerald-400'>Create your account</h2>
+				<h2 className='mt-6 text-center text-3xl font-extrabold text-emerald-400'>Sign in to your account</h2>
 			</motion.div>
 
 			<motion.div
@@ -71,8 +71,8 @@ setLoading(true)
 									 placeholder-gray-400 focus:outline-none focus:ring-emerald-500 
 									 focus:border-emerald-500 sm:text-sm'
 									placeholder='you@example.com'
-									value={LogInData.Email}
-									onChange={(e)=>{setLogIn({...LogInData ,Email:e.target.value })}}
+									value={logInData.email}
+									onChange={(e)=>{setLogIn({...logInData ,email:e.target.value })}}
 								/>
 							</div>
 						</div>
@@ -93,8 +93,8 @@ setLoading(true)
 									className=' block w-full px-3 py-2 pl-10 bg-gray-700 border border-gray-600 
 									rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm'
 									placeholder='••••••••'
-									value={LogInData.Password}
-									onChange={(e)=>{setLogIn({...LogInData ,Password:e.target.value })}}
+									value={logInData.password}
+									onChange={(e)=>{setLogIn({...logInData ,password:e.target.value })}}
 								/>
 							</div>
 						</div>

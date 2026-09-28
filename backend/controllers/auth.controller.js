@@ -1,5 +1,5 @@
 import User from "../model/user.model.js"
-import generateTokenAndSetCookie from "../util/generateToken.js"
+import { refreshTokenAndSetCookie, clearAuthCookies, verifyAuthToken, REFRESH_COOKIE } from "../util/generateToken.js"
 
 
 const publicUser = (user) => ({
@@ -26,7 +26,7 @@ if(find){
 }
 const NewUser = new User({ name, email, password, role: "customer" })
 await NewUser.save()
-const token =generateTokenAndSetCookie(NewUser._id.toString(),res)
+refreshTokenAndSetCookie(NewUser, res)
 res.status(200).json(publicUser(NewUser))
     }
     catch(error){
@@ -40,7 +40,9 @@ export const login = async(req , res)=>{
 try {
 const {email , password} = req.body
 
-if(!email || !password){
+// Type-check before use. email.trim() on a non-string (number, object, array)
+// would throw a TypeError and surface as an unexplained 500.
+if(typeof email !== "string" || typeof password !== "string" || !email || !password){
     return res.status(400).json({error: "Email and password are required" })
 }
 
@@ -50,7 +52,7 @@ if(!newuser || !(await newuser.comparePassword(password))){
     return res.status(401).json({error: "Invalid email or password" })
 }
 
-generateTokenAndSetCookie(newuser._id, res )
+refreshTokenAndSetCookie(newuser, res )
 
 res.status(200).json(publicUser(newuser))
 
@@ -68,7 +70,21 @@ catch(error){
 
 export const logout = async(req , res)=>{
 try {
-    res.clearCookie("jwt"); 
+    // Clearing the cookie only removes the browser's copy. Any token that was
+    // already captured stays cryptographically valid until it expires, so bump
+    // tokenVersion as well: every token issued before this point now fails the
+    // check in protectRoute.
+    const decoded = verifyAuthToken(req.cookies[REFRESH_COOKIE], "refresh")
+        || verifyAuthToken(req.cookies.jwt, "access");
+
+    if (decoded) {
+        await User.updateOne(
+            { _id: decoded.userId },
+            { $inc: { tokenVersion: 1 } }
+        );
+    }
+
+    clearAuthCookies(res);
     res.status(200).json({ message: "Logged out successfully" });
 
 }
@@ -76,6 +92,38 @@ catch(error){
     console.log("Error in logout controller", error.message);
     res.status(500).json({error: "error"})
 
+}
+
+}
+
+// Exchanges a valid refresh token for a fresh cookie pair. The access token is
+// short-lived, so the frontend calls this transparently when it hits a 401.
+export const refresh = async(req , res)=>{
+try {
+    const decoded = verifyAuthToken(req.cookies[REFRESH_COOKIE], "refresh");
+
+    if (!decoded) {
+        return res.status(401).json({ error: "Unauthorized - Invalid or Expired Refresh Token" });
+    }
+
+    const user = await User.findOne({ _id: decoded.userId }).select("-password");
+
+    if (!user) {
+        return res.status(401).json({ error: "Unauthorized - User Not Found" });
+    }
+
+    // A logout or a revoked session invalidates the refresh token too.
+    if ((decoded.tokenVersion ?? 0) !== (user.tokenVersion ?? 0)) {
+        clearAuthCookies(res);
+        return res.status(401).json({ error: "Unauthorized - Session Revoked" });
+    }
+
+    refreshTokenAndSetCookie(user, res);
+    res.status(200).json(publicUser(user));
+}
+catch(error){
+    console.log("Error in refresh controller", error.message);
+    res.status(500).json({error: "error"})
 }
 
 }
