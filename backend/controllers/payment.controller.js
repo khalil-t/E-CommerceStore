@@ -1,6 +1,8 @@
+import mongoose from "mongoose";
 import Product from "../model/product.model.js";
 import Coupon from "../model/coupon.model.js";
 import Order from "../model/order.model.js";
+import { verifyPayment } from "../lib/payments.js";
 export const createCheckoutSession= async(req, res)=>{
 try{
     const {products, couponCode}=req.body
@@ -8,19 +10,53 @@ try{
     if(!Array.isArray(products) || products.length===0){
         return res.status(400).json({ error: "Invalid or empty products array" });
     }
-let totalAmount = 0 ;
- products.forEach((product)=>{
-    totalAmount+=product.price * product.quantity;
-})
+
+    const productIds = products.map((item) => item.product);
+
+    if(productIds.some((id) => !mongoose.Types.ObjectId.isValid(id))){
+        return res.status(400).json({ error: "Invalid product id" });
+    }
+
+    const uniqueProductIds = [...new Set(productIds.map((id) => id.toString()))];
+
+    const dbProducts = await Product.find({ _id: { $in: uniqueProductIds } });
+
+    if(dbProducts.length !== uniqueProductIds.length){
+        return res.status(404).json({ error: "One or more products were not found" });
+    }
+
+    let totalAmount = 0 ;
+    const orderProducts = [];
+
+    for (const item of products) {
+        const quantity = Number(item.quantity);
+
+        if(!Number.isInteger(quantity) || quantity < 1){
+            return res.status(400).json({ error: "Invalid quantity" });
+        }
+
+        const dbProduct = dbProducts.find(
+            (p) => p._id.toString() === item.product.toString()
+        );
+
+        totalAmount += dbProduct.price * quantity;
+
+        orderProducts.push({
+            product: dbProduct._id,
+            quantity: quantity,
+            price: dbProduct.price,
+        })
+    }
 
 
 const newOrder= new Order({
     user: req.user._id,  
-    products: products, 
+    products: orderProducts, 
     totalAmount: totalAmount,  
     status: "pending",
 })
-await newOrder.save();
+await newOrder.save(); 
+
 
 if(totalAmount>= 200){
     await createNewCoupon(req.user._id);
@@ -63,17 +99,26 @@ return newCoupon
 }
 
 export const checkoutSuccess= async(req, res)=>{
-    const { orderId, paymentStatus } = req.body; 
+    const { orderId, paymentReference } = req.body;
 try{
+if(!mongoose.Types.ObjectId.isValid(orderId)){
+    return res.status(400).json({ error: "Invalid order id" });
+}
+
 const order = await Order.findOne({
     _id: orderId, 
+    user: req.user._id,
     status : "pending"
 })
 if (!order) {
     return res.status(404).json({ error: "Pending order not found" });
   }
-  if (paymentStatus !== "success") {
-    return res.status(400).json({ error: "Payment was not successful" });
+
+  let payment;
+  try {
+    payment = await verifyPayment({ order, paymentReference });
+  } catch (error) {
+    return res.status(402).json({ error: error.message });
   }
 
 
@@ -86,6 +131,7 @@ if(coupon){
 await coupon.save()
 }
 order.status= "paid"
+order.paymentReference = payment.reference
 await order.save()
 
 
@@ -95,7 +141,6 @@ res.status(200).json({
     orderId: order._id,
     finalPrice: order.totalAmount,
   });
-
 }
 catch(error){
     console.log("error" , error.message)
@@ -104,21 +149,3 @@ catch(error){
 
 }
 
-/*
-async function createCoupon(discountPercentage, userId) {
-    
-    const couponCode = "DISCOUNT" + Math.random().toString(36).substring(2, 8).toUpperCase();
-
-    const newCoupon = new Coupon({
-        code: couponCode,
-        discountPercentage: discountPercentage,
-        expirationDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // Valid for 30 days
-        userId: userId,
-        isActive: true,
-    });
-
-    await newCoupon.save()
-    return couponCode
-
-
-}*/

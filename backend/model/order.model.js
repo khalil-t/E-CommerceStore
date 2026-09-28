@@ -37,6 +37,11 @@ const orderSchema = new mongoose.Schema(
 			enum: ["pending", "paid", "failed", "canceled"], // Allowed statuses
 			default: "pending", // Set default to "pending"
 		},
+
+		paymentReference: {
+			type: String, // Payment provider reference, e.g. a Stripe PaymentIntent id
+			default: null,
+		},
 	},
 	{ timestamps: true }
 );

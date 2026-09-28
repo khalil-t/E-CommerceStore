@@ -110,8 +110,7 @@ const createCheckoutSession=async(cartItems)=>{
 try{
   let products =cartItems.map((item) => ({
   product: item._id,      
-  quantity: item.quantity, 
-  price: item.price        
+  quantity: item.quantity 
 }));
   const couponCode="fffff";
 
