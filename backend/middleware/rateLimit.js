@@ -51,4 +51,11 @@ export const refreshLimiter = createRateLimiter({
     message: "Too many refresh attempts. Please try again later.",
 });
 
+
+export const adminBootstrapLimiter = createRateLimiter({
+    windowMs: 60 * 60 * 1000,
+    max: 10,
+    message: "Too many admin registration attempts. Please try again later.",
+});
+
 export default createRateLimiter;

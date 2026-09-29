@@ -1,12 +1,15 @@
 import express from "express"
-import { login , logout , signup , getAllUsers , getUserProfile , refresh } from "../controllers/auth.controller.js"
+import { login , logout , signup , getAllUsers , getUserProfile , refresh , adminRegister } from "../controllers/auth.controller.js"
 import protectRoute from "../middleware/protectRoute.js"
 import adminOnly from "../middleware/adminOnly.js"
 import asyncHandler from "../middleware/asyncHandler.js"
-import { loginLimiter, signupLimiter, refreshLimiter } from "../middleware/rateLimit.js"
+import { loginLimiter, signupLimiter, refreshLimiter, adminBootstrapLimiter } from "../middleware/rateLimit.js"
 const router =express.Router()
 
 router.post("/signup", signupLimiter, asyncHandler(signup))
+
+
+router.post("/admin/register", adminBootstrapLimiter, asyncHandler(adminRegister))
 router.get("/me",protectRoute,asyncHandler(getUserProfile))
 router.get("/getAllUsers",protectRoute,adminOnly,asyncHandler(getAllUsers))
 router.post("/login",loginLimiter, asyncHandler(login))

@@ -55,6 +55,22 @@ const Signup=async(Signup)=>{
 
 }
 
+const AdminRegister = async (form) => {
+  const { name, email, password, confirmPassword } = form;
+  const response = await fetch(import.meta.env.VITE_APP_ADMIN_REGISTER, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: 'include',
+      body: JSON.stringify({ name, email, password, confirmPassword }),
+    });
+
+  if (!response.ok) {
+    throw new Error(await readErrorMessage(response, "Failed to register the admin"));
+  }
+
+  return await response.json();
+}
+
 const Logout = async()=>{
 try {
   const { body } = await authFetch(import.meta.env.VITE_APP_LOGOUT_URL, {
@@ -88,7 +104,7 @@ catch (error) {
 }
 
 
-return {Login,Signup, getUser , Logout}
+return {Login,Signup, AdminRegister, getUser , Logout}
 }
 export default useUserStore
 

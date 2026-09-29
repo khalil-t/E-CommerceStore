@@ -39,15 +39,15 @@ const orderSchema = new mongoose.Schema(
 		},
 
 		paymentReference: {
-			type: String, // Payment provider reference, e.g. a Stripe PaymentIntent id
+			type: String, 
 			default: null,
 		},
 	},
 	{ timestamps: true }
 );
 
-// At most one active checkout per user, enforced by the index rather than the controller so
-// concurrent requests cannot both insert.
+
+
 orderSchema.index({ user: 1 }, {
 	unique: true,
 	partialFilterExpression: { status: "pending" },

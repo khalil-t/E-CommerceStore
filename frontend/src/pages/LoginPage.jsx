@@ -113,12 +113,20 @@ const [loading, setLoading] = useState(false)
 						</button>
 					</form>
 
-					<p className='mt-8 text-center text-sm text-gray-400'>
-						Not a member?{" "}
-						<Link to='/signup' className='font-medium text-emerald-400 hover:text-emerald-300'>
-							Sign up now <ArrowRight className='inline h-4 w-4' />
-						</Link>
-					</p>
+				<p className='mt-8 text-center text-sm text-gray-400'>
+					Not a member?{" "}
+					<Link to='/signup' className='font-medium text-emerald-400 hover:text-emerald-300'>
+						Sign up now <ArrowRight className='inline h-4 w-4' />
+					</Link>
+				</p>
+
+				<p className='mt-3 text-center text-xs text-gray-500'>
+					First time setting up this store?{" "}
+					<Link to='/admin/register' className='font-medium text-gray-400 hover:text-gray-300'>
+						Create the owner account
+					</Link>
+				</p>
+
 				</div>
 			</motion.div>
 		</div>

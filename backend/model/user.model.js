@@ -44,9 +44,16 @@ const userSchema = new mongoose.Schema(
 		},
 	},
 	{
-		timestamps: true,
+		timestamps: true
 	}
 );
+
+
+
+
+
+userSchema.index({ role: 1 }, { name: "single_admin_role", unique: true, partialFilterExpression: { role: "admin" } });
+
 
 userSchema.pre("save", async function (next) {
 	if (!this.isModified("password")) return next();
