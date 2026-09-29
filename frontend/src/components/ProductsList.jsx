@@ -70,6 +70,13 @@ await toggleFeaturedProduct(e)
 							scope='col'
 							className='px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider'
 						>
+							Quantity
+						</th>
+
+						<th
+							scope='col'
+							className='px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider'
+						>
 							Featured
 						</th>
 						<th
@@ -103,6 +110,15 @@ await toggleFeaturedProduct(e)
 							</td>
 							<td className='px-6 py-4 whitespace-nowrap'>
 								<div className='text-sm text-gray-300'>{product.category}</div>
+							</td>
+							<td className='px-6 py-4 whitespace-nowrap'>
+								{Number(product.quantity ?? 0) === 0 ? (
+									<span className='inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-red-900/50 text-red-300'>
+										Out of stock
+									</span>
+								) : (
+									<span className='text-sm text-gray-300'>{Number(product.quantity)}</span>
+								)}
 							</td>
 							<td className='px-6 py-4 whitespace-nowrap'>
 								<button

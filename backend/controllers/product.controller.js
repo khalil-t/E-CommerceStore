@@ -35,41 +35,81 @@ catch(error){
 
 }
 
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+
+const discardUploadedImage = async (upload) => {
+    if (!upload?.public_id) return;
+    try {
+        await cloudinary.uploader.destroy(upload.public_id);
+    } catch (cleanupError) {
+        console.warn("Could not remove orphaned upload:", cleanupError.message);
+    }
+};
+
 export const createProduct = async (req, res) => {
     try {
-      const { name, description, price, image, category } = req.body;
+      const { name, description, price, quantity, image, category } = req.body;
       let cloudinaryResponse = null;
 
-      if (image) {
-       
-        if (!/^data:image\/[a-z0-9.+-]+;base64,/i.test(image)) {
-          return res.status(400).json({ message: "Image must be a base64 data URL" });
-        }
-
-     
-        const encodedBytes = image.length - image.indexOf(",") - 1;
-        const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
-        if (encodedBytes > MAX_IMAGE_BYTES * 1.4) {
-          return res.status(413).json({ message: "Image is larger than 5 MB" });
-        }
-
-        cloudinaryResponse = await cloudinary.uploader.upload(image, {
-          folder: "products",
-          resource_type: "image",
-          allowed_formats: ["jpg", "jpeg", "png", "webp", "avif", "gif"],
-        });
+      if (typeof name !== "string" || !name.trim()) {
+        return res.status(400).json({ message: "Name is required" });
       }
 
+      if (typeof description !== "string" || !description.trim()) {
+        return res.status(400).json({ message: "Description is required" });
+      }
+
+      const parsedPrice = Number(price);
+      if (price === "" || price === null || price === undefined || !Number.isFinite(parsedPrice) || parsedPrice < 0) {
+        return res.status(400).json({ message: "Price must be a number of 0 or more" });
+      }
+
+      let parsedQuantity = 0;
+      if (quantity !== undefined && quantity !== null && quantity !== "") {
+        parsedQuantity = typeof quantity === "number" ? quantity : Number(quantity);
+        if (!Number.isInteger(parsedQuantity) || parsedQuantity < 0) {
+          return res.status(400).json({ message: "Quantity must be a whole number of 0 or more" });
+        }
+      }
+
+      if (typeof category !== "string" || !category.trim()) {
+        return res.status(400).json({ message: "Category is required" });
+      }
+
+      if (typeof image !== "string" || !image) {
+        return res.status(400).json({ message: "Image is required" });
+      }
+
+      if (!/^data:image\/[a-z0-9.+-]+;base64,/i.test(image)) {
+        return res.status(400).json({ message: "Image must be a base64 data URL" });
+      }
+
+      const encodedBytes = image.length - image.indexOf(",") - 1;
+      if (encodedBytes > MAX_IMAGE_BYTES * 1.4) {
+        return res.status(413).json({ message: "Image is larger than 5 MB" });
+      }
+
+      cloudinaryResponse = await cloudinary.uploader.upload(image, {
+        folder: "products",
+        resource_type: "image",
+        allowed_formats: ["jpg", "jpeg", "png", "webp", "avif", "gif"],
+      });
+
       const product = await Product.create({
-        name,
-        description,
-        price,
-        image: cloudinaryResponse?.secure_url || "", 
+        name: name.trim(),
+        description: description.trim(),
+        price: parsedPrice,
+        quantity: parsedQuantity,
+        image: cloudinaryResponse?.secure_url || "",
         category,
       });
-  
+
       res.status(201).json(product);
     } catch (error) {
+      await discardUploadedImage(cloudinaryResponse);
+      if (error.name === "ValidationError") {
+        return res.status(400).json({ message: error.message });
+      }
       console.log("error", error.message);
       res.status(500).json({ message: "Server error", error: error.message });
     }

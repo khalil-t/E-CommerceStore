@@ -46,26 +46,18 @@ try{
 } 
 
 const createProduct=async(product)=>{
-    try{
-     const{ name, description, price, image, category}= product
-      
-     const { response, body } = await authFetch(import.meta.env.VITE_APP_CREATEPRODUCT , {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, description, price, image, category}),
-      });
+    const { name, description, price, quantity, image, category}= product
+    const { response, body } = await authFetch(import.meta.env.VITE_APP_CREATEPRODUCT , {
+       method: "POST",
+       headers: { "Content-Type": "application/json" },
+     body: JSON.stringify({ name, description, price, quantity, image, category}),
+     });
 
-      if (!response.ok) {
-        throw new Error('Failed to createProduct');
-      }
-    
-      const data = body
-      console.log(data)
-  
+    if (!response.ok) {
+        throw new Error(body?.message || "Could not create product");
     }
-        catch (error) {
-            console.log("Error in createProduct:", error.message);
-        }
+
+    return body
 }
 
 
