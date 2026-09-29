@@ -1,10 +1,9 @@
-// Small in-memory fixed-window limiter, scoped per IP. Sufficient for a single
-// process. If the app is ever run on more than one instance, move the counters
-// into Redis (ioredis is already a dependency) or the limit becomes per-instance.
+// In-memory fixed-window limiter, per IP. For more than one instance the counters must move to
+// Redis (ioredis is already a dependency) or the limit becomes per-instance.
 const createRateLimiter = ({ windowMs, max, message }) => {
     const hits = new Map();
 
-    // Stop the map growing without bound as addresses come and go.
+    // Stops the map growing without bound as addresses come and go.
     const sweep = setInterval(() => {
         const now = Date.now();
         for (const [key, entry] of hits) {

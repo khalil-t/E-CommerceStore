@@ -30,11 +30,11 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 
-app.use(express.json({ limit: '10mb' })); // or higher if needed
+app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Reject oversized or malformed bodies before they reach a route, with JSON
-// rather than Express's default HTML page.
+// Reject oversized or malformed bodies before they reach a route, as JSON rather than Express's
+// default HTML page.
 app.use((err, req, res, next) => {
     if (!err) return next();
 
@@ -61,9 +61,8 @@ app.use((req, res) => {
     res.status(404).json({ error: "Not found" });
 });
 
-// Final error handler. Must be registered last. Never returns a stack trace or
-// a filesystem path: the default Express handler leaks the absolute server path
-// and the full call stack to the client.
+// Final error handler, registered last. Never returns a stack trace or filesystem path, which
+// the default Express handler leaks to the client.
 app.use((err, req, res, next) => {
     console.error(err);
 

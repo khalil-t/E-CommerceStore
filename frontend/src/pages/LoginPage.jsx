@@ -6,7 +6,6 @@ import useUser from "../lib/Zustand";
 import toast from "react-hot-toast";
 import useUserStore from "../stores/useUserStore";
 const LoginPage = () => {
-//set
 	const setUser = useUser((state) => state.setUser);  
 	const navigate = useNavigate();
 

@@ -7,7 +7,6 @@ import useUserStore from "../stores/useUserStore";
 import useUser from "../lib/Zustand";
 
 const SignUpPage = () => {
-	//set
 	const setUser = useUser((state) => state.setUser);  
 	const navigate = useNavigate();
 

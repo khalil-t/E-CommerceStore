@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MoveRight } from "lucide-react";
 import axios from "../lib/axios";
 import UseCartStore from "../stores/useCartStore.jsx"
@@ -11,6 +11,8 @@ import useUser from "../lib/Zustand.jsx";
 const OrderSummary = () => {
 	const productList = useUser((state) => state.productList);
 		const cartItems = useUser((state) => state.cartItems);
+		const setPendingOrderId = useUser((state) => state.setPendingOrderId);
+	const navigate = useNavigate();
 
 const{getCheckoutQuote, createCheckoutSession} = UseCartStore()
 
@@ -20,8 +22,6 @@ const [checkingOut , setCheckingOut] =useState(false)
 
 const cartKey = JSON.stringify(cartItems.map((item) => [item._id, item.quantity]))
 
-// Read-only. Asks the backend for the authoritative total. This endpoint creates
-// no Order, so rendering the cart stays side-effect free.
 useEffect(()=>{
 	if(!cartItems.length){
 		setTotal(0)
@@ -46,16 +46,19 @@ useEffect(()=>{
 	return ()=>{cancelled = true}
 },[cartKey])
 
-// The only place checkout state is created, and only on an explicit click.
 const handleCheckout=async()=>{
 	if(checkingOut || !cartItems.length) return
 
 	setCheckingOut(true)
 	try{
-		const data = await createCheckoutSession(cartItems)
-		// No payment provider is wired up yet. When Stripe is connected this is
-		// where the redirect to the hosted checkout page belongs.
-		toast.success(data.message)
+			const data = await createCheckoutSession(cartItems)
+			setPendingOrderId(data.orderId)
+			if (data.url || data.sessionUrl) {
+				window.location.href = data.url || data.sessionUrl
+			} else {
+				navigate("/purchase-success")
+			}
+			toast.success(data.message)
 	}catch(error){
 		toast.error(error.message)
 	}finally{

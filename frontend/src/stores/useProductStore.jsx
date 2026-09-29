@@ -1,6 +1,7 @@
 
 
 import useUser from "../lib/Zustand"
+import { authFetch } from "../lib/authFetch.js"
 
 const useProductStore =()=>{
     const productList = useUser((state) => state.productList);
@@ -13,12 +14,11 @@ const { voucherCode, setVoucherCode } = useUser();
 
 const getAllProducts=async()=>{
 try{
-    const response = await fetch(import.meta.env.VITE_APP_PRODUCTS, {
+    const { body } = await authFetch(import.meta.env.VITE_APP_PRODUCTS, {
         method: "GET",
       headers: { "Content-Type": "application/json" },
-      credentials: 'include',
       });
-      const data= await response.json()
+      const data = body
       setProductList(data.products);
       return data;
 
@@ -33,12 +33,11 @@ catch (error) {
 const getFeaturedProducts=async()=>{
 try{
 
-    const response = await fetch(import.meta.env.VITE_APP_products, {
+    const { body } = await authFetch(import.meta.env.VITE_APP_products, {
         method: "GET",
       headers: { "Content-Type": "application/json" },
-      credentials: 'include',
       });
-      const data= await response.json()
+      const data = body
 
 }
     catch (error) {
@@ -50,18 +49,17 @@ const createProduct=async(product)=>{
     try{
      const{ name, description, price, image, category}= product
       
-     const response = await fetch(import.meta.env.VITE_APP_CREATEPRODUCT , {
+     const { response, body } = await authFetch(import.meta.env.VITE_APP_CREATEPRODUCT , {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: 'include', 
-        body: JSON.stringify({ name, description, price, image, category}),
+      body: JSON.stringify({ name, description, price, image, category}),
       });
 
       if (!response.ok) {
         throw new Error('Failed to createProduct');
       }
     
-      const data= await response.json()
+      const data = body
       console.log(data)
   
     }
@@ -74,12 +72,11 @@ const createProduct=async(product)=>{
 const deleteProduct=async(productId)=>{
     try{
 
-        const response = await fetch(`${import.meta.env.VITE_APP_CREATEPRODUCT}/${productId}`, {
+        const { body } = await authFetch(`${import.meta.env.VITE_APP_CREATEPRODUCT}/${productId}`, {
             method: "DELETE",
           headers: { "Content-Type": "application/json" },
-          credentials: 'include',
           });
-          const data= await response.json()
+          const data = body
           UpdateProduct(data)
           console.log(data)
     
@@ -93,12 +90,11 @@ const deleteProduct=async(productId)=>{
 
 const getProductsByCategory=async(category)=>{
     try{
-        const response = await fetch(`${import.meta.env.VITE_APP_CATEGORY}/${category}`, {
+        const { body } = await authFetch(`${import.meta.env.VITE_APP_CATEGORY}/${category}`, {
             method: "GET",
           headers: { "Content-Type": "application/json" },
-          credentials: 'include',
           });
-          const data= await response.json()
+          const data = body
     return data
     }
         catch (error) {
@@ -111,12 +107,11 @@ const getProductsByCategory=async(category)=>{
 
 const getRecommendedProducts =async()=>{
 try{
-    const response = await fetch(import.meta.env.VITE_APP_recommended, {
+    const { body } = await authFetch(import.meta.env.VITE_APP_recommended, {
         method: "GET",
       headers: { "Content-Type": "application/json" },
-      credentials: 'include',
       });
-      const data= await response.json()
+      const data = body
       console.log(data)
 }
 catch(error){
@@ -127,12 +122,11 @@ catch(error){
 
 const toggleFeaturedProduct =async(toggle)=>{
     try{
-        const response = await fetch(`${import.meta.env.VITE_APP_PRODUCTS}/${toggle}/toggle-featured`, {
+        const { body } = await authFetch(`${import.meta.env.VITE_APP_PRODUCTS}/${toggle}/toggle-featured`, {
             method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          credentials: 'include',
           });
-          const data= await response.json()
+          const data = body
 
           toggleFeaturedInStore(data._id, data.isFeatured);
 
@@ -146,12 +140,11 @@ const toggleFeaturedProduct =async(toggle)=>{
 
 const getCoupon=async()=>{
     try{
-    const response = await fetch(import.meta.env.VITE_APP_GETCOUPON, {
+    const { body } = await authFetch(import.meta.env.VITE_APP_GETCOUPON, {
         method: "GET",
       headers: { "Content-Type": "application/json" },
-      credentials: 'include',
       });
-      const data= await response.json()
+      const data = body
       console.log(data)
 }
 catch(error){
@@ -163,14 +156,13 @@ catch(error){
 const validateCoupon=async(code)=>{
 
     try{
-    const response = await fetch(import.meta.env.VITE_APP_VALIDATE, {
+    const { body } = await authFetch(import.meta.env.VITE_APP_VALIDATE, {
         method: "POST",
       headers: { "Content-Type": "application/json" },
-      credentials: 'include',
-              body: JSON.stringify({ code}),
+      body: JSON.stringify({ code}),
 
       });
-      const data= await response.json()
+      const data = body
       console.log(data.totalAmount)
       setVoucherCode(data.totalAmount)
       console.log(voucherCode)

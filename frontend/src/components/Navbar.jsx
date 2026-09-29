@@ -19,7 +19,6 @@ fetchData();
 },[])
 
 
-//cart
 
 	const { Logout}= useUserStore()
 

@@ -4,7 +4,6 @@ import useProductStore from "../stores/useProductStore"
 import useUser from "../lib/Zustand";
 const GiftCouponCard = () => {
 	const [userInputCode, setUserInputCode] = useState("");
-//get coupon , set code , remove coupon 
 	
 const {getCoupon,creatCoupon,validateCoupon}=useProductStore()
 

@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Users, Package, ShoppingCart, DollarSign } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { authFetch } from "../lib/authFetch.js";
 
 const AnalyticsTab = () => {
 	const [analyticsData, setAnalyticsData] = useState({
@@ -19,12 +20,11 @@ numUsers: 0,
 
 		const fetchAnalyticsData = async () => {
 			try {
-				 const response = await fetch(import.meta.env.VITE_APP_GETANALYTICSDATA, {
+				 const { body } = await authFetch(import.meta.env.VITE_APP_GETANALYTICSDATA, {
         method: "GET",
       headers: { "Content-Type": "application/json" },
-      credentials: 'include',
       });
-      const data= await response.json()
+      const data = body
 				setAnalyticsData(data);
 			} catch (error) {
 				console.error("Error fetching analytics data:", error);
@@ -37,12 +37,11 @@ numUsers: 0,
 
 	    const fetchDailySales=async()=>{
 				try {
-				 const response = await fetch(import.meta.env.VITE_APP_DAILYSALES, {
+				 const { body } = await authFetch(import.meta.env.VITE_APP_DAILYSALES, {
         method: "GET",
       headers: { "Content-Type": "application/json" },
-      credentials: 'include',
       });
-      const data= await response.json()
+      const data = body
 	  console.log(data)
 				setDailySalesData(
 					data.salesData.map((item) => ({

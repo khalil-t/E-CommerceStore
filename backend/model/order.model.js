@@ -34,8 +34,8 @@ const orderSchema = new mongoose.Schema(
 		
 		status: {
 			type: String,
-			enum: ["pending", "paid", "failed", "canceled"], // Allowed statuses
-			default: "pending", // Set default to "pending"
+			enum: ["pending", "paid", "failed", "canceled"],
+			default: "pending",
 		},
 
 		paymentReference: {
@@ -46,9 +46,8 @@ const orderSchema = new mongoose.Schema(
 	{ timestamps: true }
 );
 
-// A user has at most one active checkout. Enforced by the database rather than by
-// the controller, so two concurrent checkout requests cannot both insert a pending
-// order no matter how the read-then-write in the controller interleaves.
+// At most one active checkout per user, enforced by the index rather than the controller so
+// concurrent requests cannot both insert.
 orderSchema.index({ user: 1 }, {
 	unique: true,
 	partialFilterExpression: { status: "pending" },

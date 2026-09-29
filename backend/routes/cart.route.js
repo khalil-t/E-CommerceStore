@@ -1,11 +1,14 @@
 import express from "express";
 import {getCartProducts ,addToCart ,removeAllFromCart , updateQuantity} from "../controllers/cart.controller.js"
 import protectRoute from "../middleware/protectRoute.js";
+import asyncHandler from "../middleware/asyncHandler.js";
 const router = express.Router()
 
-router.get("/getCartProducts",protectRoute, getCartProducts)
-router.post("/addToCart",protectRoute, addToCart)
-router.delete("/removeAllFromCart/:productId",protectRoute, removeAllFromCart)
-router.patch("/updateQuantity/:id",protectRoute, updateQuantity)
+router.get("/getCartProducts",protectRoute, asyncHandler(getCartProducts))
+router.post("/addToCart",protectRoute, asyncHandler(addToCart))
+router.delete("/removeAllFromCart/:productId",protectRoute, asyncHandler(removeAllFromCart))
+// No :productId, so removeAllFromCart clears every line item. Used after a confirmed payment.
+router.delete("/removeAllFromCart",protectRoute, asyncHandler(removeAllFromCart))
+router.patch("/updateQuantity/:id",protectRoute, asyncHandler(updateQuantity))
 
 export default router

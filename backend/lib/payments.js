@@ -1,16 +1,12 @@
 const PAYMENT_MODE = process.env.PAYMENT_MODE || "none";
 
-// The single place where "this order was actually paid for" is decided.
-// Every path that sets order.status = "paid" must go through verifyPayment().
-//
-// The browser can send whatever it likes in the request body, so a value
-// coming from req.body is never proof of payment on its own.
+// The single place where an order is declared paid. The browser can send anything in the
+// request body, so a value from req.body is never proof of payment.
 //
 // TODO: connect Stripe. Replace the mock branch with a server-side lookup:
-//   const intent = await stripe.paymentIntents.retrieve(paymentReference);
-//   if (intent.status !== "succeeded") throw new Error("Payment not completed");
-//   return { provider: "stripe", reference: intent.id };
-// Keep the lookup here so no other controller has to know how payments work.
+// const intent = await stripe.paymentIntents.retrieve(paymentReference);
+// if (intent.status !== "succeeded") throw new Error("Payment not completed");
+// return { provider: "stripe", reference: intent.id };
 
 export const verifyPayment = async ({ order, paymentReference }) => {
     if (process.env.NODE_ENV === "production" && PAYMENT_MODE !== "none") {

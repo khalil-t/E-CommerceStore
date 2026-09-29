@@ -179,9 +179,9 @@ export const createCheckoutSession = async (req, res) => {
 async function createNewCoupon(userId) {
     await Coupon.findOneAndDelete({userId})
 const newCoupon= new Coupon({
-    code: "GIFT" + Math.random().toString(36).substring(2, 8).toUpperCase(), // Random code
-    discountPercentage: 10, // 10% discount
-    expirationDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // Expires in 30 days
+    code: "GIFT" + Math.random().toString(36).substring(2, 8).toUpperCase(),
+    discountPercentage: 10,
+    expirationDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
     userId: userId,
 })
 await newCoupon.save()

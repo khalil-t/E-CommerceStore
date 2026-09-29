@@ -4,7 +4,6 @@ import { persist } from 'zustand/middleware';
 const useUser = create(
   persist(
     (set, get) => ({
-      // --- USER state ---
       user: null,
       setUser: (userData) => set({ user: userData }),
       clearUser: () => set({ user: null }),
@@ -12,7 +11,6 @@ const useUser = create(
       isAuthChecked: false,
       setIsAuthChecked: (checked) => set({ isAuthChecked: checked }),
 
-      // --- PRODUCTS state ---
       productList: [],
 
       setProductList: (products) => {
@@ -54,9 +52,13 @@ const useUser = create(
         }
       },
 
-      // --- cartItems state ---
       cartItems: [],
       setCartItems: (items) => set({ cartItems: items }),
+
+      clearCart: () => set({ cartItems: [] }),
+
+      pendingOrderId: null,
+      setPendingOrderId: (id) => set({ pendingOrderId: id || null }),
 
       updateCart: (productId, quantity) => {
         const updatedCart = get().cartItems.map(item =>
@@ -68,7 +70,6 @@ const useUser = create(
         const updatedCart = get().cartItems.filter(item => item._id !== productId);
         set({ cartItems: updatedCart });
       },
-      // --- Num state ---
 
       num: 0,
       setNum: (count) => set({ num: count }),
@@ -77,7 +78,6 @@ const useUser = create(
         num: state.num > 0 ? state.num - 1 : 0
       })),
       resetNum: () => set({ num: 0 }),
-         // --- Coupon Voucher Code ---
       voucherCode: "",
       setVoucherCode: (code) => set({ voucherCode: code }),
     }),

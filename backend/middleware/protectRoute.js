@@ -1,5 +1,6 @@
 import User from "../model/user.model.js";
 import { verifyAuthToken, ACCESS_COOKIE } from "../util/generateToken.js";
+import asyncHandler from "./asyncHandler.js";
 
 const protectRoute = async (req, res, next) => {
     try {
@@ -15,9 +16,8 @@ const protectRoute = async (req, res, next) => {
             return res.status(401).json({ error: "Unauthorized - User Not Found" });
         }
 
-        // The role is always taken from this database document, never from the
-        // token or the request, so it cannot be forged and reflects changes
-        // (including promotion, demotion and logout revocation) immediately.
+        // The role always comes from this document, never from the token or the request, so it
+        // cannot be forged and reflects role changes immediately.
         if ((decoded.tokenVersion ?? 0) !== (finduser.tokenVersion ?? 0)) {
             return res.status(401).json({ error: "Unauthorized - Session Revoked" });
         }
@@ -30,4 +30,6 @@ const protectRoute = async (req, res, next) => {
     }
 };
 
-export default protectRoute;
+// Expected auth failures are answered with 401 above; only an unexpected failure, such as the
+// database being unreachable, reaches the catch and produces a 500.
+export default asyncHandler(protectRoute);

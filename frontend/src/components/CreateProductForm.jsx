@@ -36,7 +36,7 @@ await createProduct(formData)
 					setFormData({ ...formData, image: reader.result });
 				};
 	
-				reader.readAsDataURL(file); // base64
+				reader.readAsDataURL(file);
 			}
 		};
 
