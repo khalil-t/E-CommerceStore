@@ -7,7 +7,6 @@ const router = express.Router()
 router.get("/getCartProducts",protectRoute, asyncHandler(getCartProducts))
 router.post("/addToCart",protectRoute, asyncHandler(addToCart))
 router.delete("/removeAllFromCart/:productId",protectRoute, asyncHandler(removeAllFromCart))
-// No :productId, so removeAllFromCart clears every line item. Used after a confirmed payment.
 router.delete("/removeAllFromCart",protectRoute, asyncHandler(removeAllFromCart))
 router.patch("/updateQuantity/:id",protectRoute, asyncHandler(updateQuantity))
 

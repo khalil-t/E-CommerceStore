@@ -6,7 +6,6 @@ import asyncHandler from "../middleware/asyncHandler.js"
 import { loginLimiter, signupLimiter, refreshLimiter } from "../middleware/rateLimit.js"
 const router =express.Router()
 
-// Rate limited: these are the two endpoints worth brute forcing.
 router.post("/signup", signupLimiter, asyncHandler(signup))
 router.get("/me",protectRoute,asyncHandler(getUserProfile))
 router.get("/getAllUsers",protectRoute,adminOnly,asyncHandler(getAllUsers))

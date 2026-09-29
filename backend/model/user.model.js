@@ -37,8 +37,7 @@ const userSchema = new mongoose.Schema(
 			default: "customer",
 		},
 
-		// Bumped on logout. Tokens embed the value they were signed with, so a mismatch revokes every
-		// JWT issued before that point.
+
 		tokenVersion: {
 			type: Number,
 			default: 0,

@@ -39,11 +39,24 @@ export const createProduct = async (req, res) => {
     try {
       const { name, description, price, image, category } = req.body;
       let cloudinaryResponse = null;
-      console.log("Received image:", image);
 
       if (image) {
+       
+        if (!/^data:image\/[a-z0-9.+-]+;base64,/i.test(image)) {
+          return res.status(400).json({ message: "Image must be a base64 data URL" });
+        }
+
+     
+        const encodedBytes = image.length - image.indexOf(",") - 1;
+        const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+        if (encodedBytes > MAX_IMAGE_BYTES * 1.4) {
+          return res.status(413).json({ message: "Image is larger than 5 MB" });
+        }
+
         cloudinaryResponse = await cloudinary.uploader.upload(image, {
           folder: "products",
+          resource_type: "image",
+          allowed_formats: ["jpg", "jpeg", "png", "webp", "avif", "gif"],
         });
       }
 
@@ -78,14 +91,12 @@ if(!product){
     return res.status(404).json({ message: "Product not found" })
 }
 
-// Deleting the stored image is best effort: it must never be why the product fails to delete,
-// and a storage failure must not leave this request without a response.
+
 let imageDeleted = false;
 
 if (product.image) {
     try {
-        // Images are uploaded with folder: "products", so the publicId is "products/filename";
-        // using only the filename targets a resource that does not exist.
+       
         const filename = product.image.split("/").pop().split(".")[0];
         const publicId = `products/${filename}`;
 

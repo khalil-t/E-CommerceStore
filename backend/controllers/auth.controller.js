@@ -71,9 +71,7 @@ catch(error){
 
 export const logout = async(req , res)=>{
 try {
-    // Clearing the cookie only removes the browser's copy, and a token already captured stays
-    // valid until it expires, so bump tokenVersion as well to invalidate every token issued
-    // before this point.
+ 
     const decoded = verifyAuthToken(req.cookies[REFRESH_COOKIE], "refresh")
         || verifyAuthToken(req.cookies.jwt, "access");
 
