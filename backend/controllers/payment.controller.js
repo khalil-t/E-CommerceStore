@@ -48,6 +48,10 @@ const priceCart = async (products) => {
             (p) => p._id.toString() === item.product.toString()
         );
 
+        if (quantity > dbProduct.quantity) {
+            throw new CheckoutError(409, `Only ${dbProduct.quantity} of "${dbProduct.name}" available`);
+        }
+
         totalAmount += dbProduct.price * quantity;
 
         orderProducts.push({

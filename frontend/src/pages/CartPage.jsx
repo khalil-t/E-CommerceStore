@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import  UseCartStore  from "../stores/useCartStore.jsx";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { ShoppingCart } from "lucide-react";
 import CartItem from "../components/CartItem";
 import PeopleAlsoBought from "../components/PeopleAlsoBought";
@@ -10,18 +10,11 @@ import GiftCouponCard from "../components/GiftCouponCard";
 import useUser from "../lib/Zustand.jsx";
 const CartPage = () => {
 	const cartItems = useUser((state) => state.cartItems);
-	const setCartItems = useUser((state) => state.setCartItems);
 
-	
-	const { getCartProducts } = UseCartStore();
-	const [CartProducts, setCartProducts]= useState([])
-	useEffect(()=>{
-const fetchCart=async()=>{
-const data = await getCartProducts()
-setCartItems(data)
-}
-fetchCart()
-	},[])
+	const { refreshCart } = UseCartStore();
+	useEffect(() => {
+		refreshCart()
+	}, [])
 
 	return (
 		<div className='py-8 md:py-16'>

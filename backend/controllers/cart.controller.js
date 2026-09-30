@@ -17,6 +17,7 @@ export const getCartProducts = async (req, res) => {
         return {
           ...product?.toJSON(),
           quantity: cartItem.quantity,
+          availableQuantity: product?.quantity ?? 0,
           _id: cartItem._id 
         };
       });
@@ -38,9 +39,27 @@ try{
       }
 
 const { _id } = req.body;
-const user = req.user 
+
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+        return res.status(400).json({ message: "Invalid product id" });
+    }
+
+const user = req.user
 const product = user.cartItems.find((item) => item.product.toString() === _id.toString());
 
+    const dbProduct = await Product.findById(_id);
+
+    if (!dbProduct) {
+        return res.status(404).json({ message: "Product not found" });
+    }
+
+    if (dbProduct.quantity <= 0) {
+        return res.status(409).json({ message: "This product is out of stock" });
+    }
+
+    if (product && product.quantity + 1 > dbProduct.quantity) {
+        return res.status(409).json({ message: "No more of this product is available" });
+    }
 
 if (product){
     product.quantity += 1
@@ -107,11 +126,23 @@ export const updateQuantity = async (req , res)=>{
       return res.status(404).json({ message: "Cart item not found" });
     }
 
-    if (quantity === 0) {
-      user.cartItems.splice(itemIndex, 1);
-    } else {
-      user.cartItems[itemIndex].quantity = quantity;
+    const requestedQuantity = Number(quantity);
+
+    if (!Number.isInteger(requestedQuantity) || requestedQuantity < 1) {
+      return res.status(400).json({ message: "Quantity must be at least 1. Use the remove endpoint to delete a cart item." });
     }
+
+    const dbProduct = await Product.findById(user.cartItems[itemIndex].product);
+
+    if (!dbProduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    if (requestedQuantity > dbProduct.quantity) {
+      return res.status(409).json({ message: "No more of this product is available" });
+    }
+
+    user.cartItems[itemIndex].quantity = requestedQuantity;
 
     await user.save();
     return res.status(200).json(user.cartItems);

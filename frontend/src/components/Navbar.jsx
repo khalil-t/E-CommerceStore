@@ -3,29 +3,31 @@ import { Link } from "react-router-dom";
 import useUserStore from "../stores/useUserStore"
 import usUseCartStore from "../stores/useCartStore.jsx"
 import useUser from "../lib/Zustand.jsx"
-import { useEffect, useState } from "react";
+import { getCartItemCount } from "../lib/cartTotals.js"
+import { useEffect } from "react";
 
 
 
 const Navbar = () => {
-	const {getCartProducts} = usUseCartStore()
-const [Cart , setCart]=useState()
-useEffect(()=>{
-const fetchData=async()=>{
-	const data = await getCartProducts();
-	setCart(data);
-}
-fetchData();	
-},[])
+const {refreshCart} = usUseCartStore()
+const cartItems = useUser((state) => state.cartItems)
 
-
+const cartCount = getCartItemCount(cartItems)
 
 	const { Logout}= useUserStore()
 
-	const setUser = useUser((state) => state.setUser);  
 	const user = useUser((state) => state.user);
 	const isAuthChecked = useUser((state) => state.isAuthChecked);
     const clearUser = useUser((state)=>state.clearUser)
+
+useEffect(()=>{
+	if (user) {
+		refreshCart()
+	} else {
+		useUser.getState().setCartItems([])
+	}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+}, [user?.email])
 
 	
 	const isAdmin = isAuthChecked && user?.role === "admin";
@@ -48,19 +50,22 @@ fetchData();
 					{user && (
 						<Link
 							to={"/cart"}
-							className='relative group text-gray-300 hover:text-emerald-400 transition duration-300 
-						ease-in-out'
+							aria-label={`Cart, ${cartCount} ${cartCount === 1 ? "item" : "items"}`}
+							className='group flex items-center gap-2 rounded-md border border-gray-700 bg-gray-800 px-3
+								py-2 text-gray-300 hover:border-emerald-500 hover:text-emerald-400 transition
+								duration-300 ease-in-out'
 						>
-							<ShoppingCart className='inline-block mr-1 group-hover:text-emerald-400' size={20} />
-							<span className='hidden sm:inline'>Cart</span>
-							{Cart > 0 && (
-								<span
-									className='absolute -top-2 -left-2 bg-emerald-500 text-white rounded-full px-2 py-0.5 
-								text-xs group-hover:bg-emerald-400 transition duration-300 ease-in-out'
-								>
-									{Cart}
-								</span>
-							)}
+							<ShoppingCart className='shrink-0' size={20} />
+							<span>Cart</span>
+							<span
+								className={`rounded-full px-2 py-0.5 text-xs font-medium transition duration-300 ease-in-out ${
+									cartCount > 0
+										? "bg-emerald-500 text-white group-hover:bg-emerald-400"
+										: "bg-gray-700 text-gray-400"
+								}`}
+							>
+								{cartCount}
+							</span>
 						</Link>
 					)}
 					{isAdmin && (

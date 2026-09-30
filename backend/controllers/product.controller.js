@@ -180,6 +180,7 @@ try{
                 description: 1,
                 image: 1,
                 price: 1,
+                quantity: 1,
             },
         },
     ]);

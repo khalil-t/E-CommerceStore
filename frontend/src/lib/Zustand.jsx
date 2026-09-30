@@ -61,8 +61,10 @@ const useUser = create(
       setPendingOrderId: (id) => set({ pendingOrderId: id || null }),
 
       updateCart: (productId, quantity) => {
+        const requested = Number(quantity);
+        const safeQuantity = Number.isInteger(requested) && requested > 0 ? requested : 1;
         const updatedCart = get().cartItems.map(item =>
-          item._id === productId ? { ...item, quantity } : item
+          item._id === productId ? { ...item, quantity: safeQuantity } : item
         );
         set({ cartItems: updatedCart });
       },

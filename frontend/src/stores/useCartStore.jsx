@@ -10,7 +10,7 @@ try{
         method: "GET",
       headers: { "Content-Type": "application/json" },
       });
-      const data = body
+    const data = body
 return data
 }
 catch (error) {
@@ -18,9 +18,19 @@ catch (error) {
 }
 }
 
+const refreshCart=async()=>{
+	try {
+		const data = await getCartProducts()
+		const items = Array.isArray(data) ? data : []
+		useUser.getState().setCartItems(items)
+		return items
+	} catch {
+		return useUser.getState().cartItems
+	}
+}
+
 const addToCart=async(Cart)=>{
-try{
-    const{_id}= Cart
+const{_id}= Cart
     const { response, body } = await authFetch(import.meta.env.VITE_APP_ADDTOCART, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -28,40 +38,27 @@ try{
       });
 
       if (!response.ok) {
-        throw new Error('Failed ');
+        throw new Error(body?.message || "Unable to add product to cart");
       }
-    
-      const data = body
-   
-}
-catch (error) {
-    console.log("Error in addToCart:", error.message);
-}
+
+      return body
 }
 
 const removeAllFromCart=async(productId)=>{
-try{
     const { response, body } = await authFetch(`${import.meta.env.VITE_APP_REMOVEALLFROMCART}/${productId}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         });
 
       if (!response.ok) {
-        throw new Error('Failed to sign up');
+        throw new Error(body?.message || "Failed to remove item from cart");
       }
-      const data = body
-      console.log(data)
 
-}
- 
-     catch (error) {
-        console.log("Error in removeAllFromCart:", error.message);
-    }
+      return body
 }
 
 
 const updateQuantity =async(quantity, productId)=>{
-try{
     const { response, body } = await authFetch(`${import.meta.env.VITE_APP_UPDATEQUANTITY}/${productId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -69,16 +66,10 @@ try{
       });
 
       if (!response.ok) {
-        throw new Error('Failed to updateQuantity');
+        throw new Error(body?.message || "Failed to updateQuantity");
       }
-    
-      const data = body
 
-
-}
-catch (error) {
-    console.log("Error in updateQuantity:", error.message);
-}
+      return body
 }
 
 
@@ -170,6 +161,6 @@ const confirmPayment = async (orderId) => {
   return body;
 };
 
- return{getCartProducts , addToCart , removeAllFromCart , updateQuantity,fetchRecommendedProducts , getCheckoutQuote, createCheckoutSession, clearCartOnServer, confirmPayment}   
+ return{getCartProducts , refreshCart, addToCart , removeAllFromCart , updateQuantity,fetchRecommendedProducts , getCheckoutQuote, createCheckoutSession, clearCartOnServer, confirmPayment}   
 }
 export default UseCartStore
