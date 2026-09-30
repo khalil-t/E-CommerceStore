@@ -2,7 +2,7 @@
   "name": "mye-commercestore",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {
+   "scripts": {
     "dev": "nodemon backend/server.js",
     "start": "node backend/server.js"
   },
