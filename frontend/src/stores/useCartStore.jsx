@@ -93,47 +93,6 @@ const updateQuantity =async(quantity, productId)=>{
   }
 };
 
-const getCheckoutQuote=async(cartItems)=>{
-  const products =cartItems.map((item) => ({
-  product: item._id,
-  quantity: item.quantity
-}));
-
-    const { response, body } = await authFetch(import.meta.env.VITE_APP_CHECKOUT_QUOTE, {
-        method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({products}),
-      });
-
-      if (!response.ok) {
-        const error = body || {};
-        throw new Error(error.error || "Failed to get the cart total");
-    }
-
-    return body
-}
-
-const createCheckoutSession=async(cartItems)=>{
-  const products =cartItems.map((item) => ({
-  product: item._id,
-  quantity: item.quantity
-}));
-
-    const { response, body } = await authFetch(import.meta.env.VITE_APP_CHECKOUT, {
-        method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({products}),
-      });
-
-      if (!response.ok) {
-        const error = body || {};
-        throw new Error(error.error || "Failed to start checkout");
-    }
-
-    const data = body
-return data
-}
-
 const clearCartOnServer = async () => {
   const { response, body } = await authFetch(import.meta.env.VITE_APP_REMOVEALLFROMCART, {
     method: "DELETE",
@@ -161,6 +120,6 @@ const confirmPayment = async (orderId) => {
   return body;
 };
 
- return{getCartProducts , refreshCart, addToCart , removeAllFromCart , updateQuantity,fetchRecommendedProducts , getCheckoutQuote, createCheckoutSession, clearCartOnServer, confirmPayment}   
+ return{getCartProducts , refreshCart, addToCart , removeAllFromCart , updateQuantity,fetchRecommendedProducts , clearCartOnServer, confirmPayment}   
 }
 export default UseCartStore

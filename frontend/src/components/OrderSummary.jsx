@@ -1,76 +1,26 @@
 import { motion } from "framer-motion";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { MoveRight } from "lucide-react";
-import UseCartStore from "../stores/useCartStore.jsx"
-import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import useUser from "../lib/Zustand.jsx";
 import { formatCurrency, getCartItemCount, getCartSubtotal } from "../lib/cartTotals.js";
+import { ComingSoonToast } from "./ComingSoonToast.jsx";
 
 const OrderSummary = () => {
 	const cartItems = useUser((state) => state.cartItems);
-	const setPendingOrderId = useUser((state) => state.setPendingOrderId);
-	const navigate = useNavigate();
-
-	const { getCheckoutQuote, createCheckoutSession } = UseCartStore()
-
-	const [quotedTotal, setQuotedTotal] = useState(null)
-	const [loading, setLoading] = useState(false)
-	const [checkingOut, setCheckingOut] = useState(false)
 
 	const itemCount = getCartItemCount(cartItems)
 	const subtotal = getCartSubtotal(cartItems)
-	const cartKey = JSON.stringify(
-		Array.isArray(cartItems) ? cartItems.map((item) => [item._id, item.quantity]) : []
-	)
 
-	const total = typeof quotedTotal === 'number' ? quotedTotal : subtotal
-
-	useEffect(() => {
-		if (!itemCount) {
-			setQuotedTotal(null)
-			return
-		}
-
-		let cancelled = false;
-
-		const fetchQuote = async () => {
-			setLoading(true)
-			try {
-				const data = await getCheckoutQuote(cartItems);
-				const serverTotal = Number(data?.finalPrice)
-				if (!cancelled) {
-					setQuotedTotal(Number.isFinite(serverTotal) ? serverTotal : null)
-				}
-			} catch {
-				if (!cancelled) setQuotedTotal(null)
-			} finally {
-				if (!cancelled) setLoading(false)
-			}
-		}
-		fetchQuote();
-
-		return () => { cancelled = true }
-	}, [cartKey])
-
-	const handleCheckout = async () => {
-		if (checkingOut || !itemCount) return
-
-		setCheckingOut(true)
-		try {
-			const data = await createCheckoutSession(cartItems)
-			setPendingOrderId(data.orderId)
-			if (data.url || data.sessionUrl) {
-				window.location.href = data.url || data.sessionUrl
-			} else {
-				navigate("/purchase-success")
-			}
-			toast.success(data.message)
-		} catch (error) {
-			toast.error(error.message)
-		} finally {
-			setCheckingOut(false)
-		}
+	const handleCheckout = () => {
+		if (!itemCount) return
+		toast.custom(
+			<ComingSoonToast
+				title='Checkout coming soon'
+				description='Online payment is not available yet.'
+			/>,
+			{ id: "coming-soon", duration: 4000 }
+		)
 	}
 
 	return (
@@ -96,22 +46,24 @@ const OrderSummary = () => {
 				<div className='flex items-center justify-between gap-4 border-t border-gray-600 pt-3'>
 					<dt className='text-base font-bold text-white'>Total</dt>
 					<dd className='text-base font-bold text-emerald-400' data-testid='order-total'>
-						{formatCurrency(total)}
+						{formatCurrency(subtotal)}
 					</dd>
 				</div>
 			</dl>
 
-			<button
+			<motion.button
 				type='button'
 				onClick={handleCheckout}
-				disabled={checkingOut || loading || !itemCount}
+				disabled={!itemCount}
+				whileHover={{ scale: itemCount ? 1.02 : 1 }}
+				whileTap={{ scale: itemCount ? 0.98 : 1 }}
 				className='w-full flex justify-center py-2 px-4 border border-transparent
 					rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600
 					hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2
 					focus:ring-emerald-500 transition duration-150 ease-in-out disabled:opacity-50'
 			>
-				{checkingOut ? 'Starting checkout...' : 'Proceed to Checkout'}
-			</button>
+				Proceed to Checkout
+			</motion.button>
 
 			<div className='flex items-center justify-center gap-2'>
 				<span className='text-sm font-normal text-gray-400'>or</span>
