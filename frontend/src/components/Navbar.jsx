@@ -4,7 +4,8 @@ import useUserStore from "../stores/useUserStore"
 import usUseCartStore from "../stores/useCartStore.jsx"
 import useUser from "../lib/Zustand.jsx"
 import { getCartItemCount } from "../lib/cartTotals.js"
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { ConfirmDialog } from "./ConfirmDialog.jsx";
 
 
 
@@ -19,6 +20,13 @@ const cartCount = getCartItemCount(cartItems)
 	const user = useUser((state) => state.user);
 	const isAuthChecked = useUser((state) => state.isAuthChecked);
     const clearUser = useUser((state)=>state.clearUser)
+    const [isLogoutConfirmOpen, setLogoutConfirmOpen] = useState(false)
+
+const handleLogout =()=>{
+    setLogoutConfirmOpen(false);
+    clearUser();
+    Logout();
+}
 
 useEffect(()=>{
 	if (user) {
@@ -26,7 +34,6 @@ useEffect(()=>{
 	} else {
 		useUser.getState().setCartItems([])
 	}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
 }, [user?.email])
 
 	
@@ -83,14 +90,7 @@ useEffect(()=>{
 						<button
 							className='bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 
 					rounded-md flex items-center transition duration-300 ease-in-out'
-					onClick={() => {
-						clearUser();
-						Logout();
-					  }}
-					  
-
-
-
+onClick={() => setLogoutConfirmOpen(true)}
 						>
 							<LogOut size={18} />
 							<span className=' sm:inline ml-2'>Log Out</span>
@@ -118,6 +118,14 @@ useEffect(()=>{
 				</nav>
 			</div>
 		</div>
+		<ConfirmDialog
+			isOpen={isLogoutConfirmOpen}
+			title='Are you sure you want to log out?'
+			description='You will need to sign in again to access your cart and account.'
+			confirmLabel='Log Out'
+			onCancel={() => setLogoutConfirmOpen(false)}
+			onConfirm={handleLogout}
+		/>
 	</header>
 	);
 };
