@@ -21,8 +21,11 @@ const app = express();
 app.use(cookieParser());
 const PORT = process.env.PORT ;
 
+
+const allowedOrigin = (process.env.CORSOPTIONS || "").trim().replace(/\/+$/, "");
+
 const corsOptions = {
-  origin: process.env.CORSOPTIONS,
+  origin: allowedOrigin,
   methods: 'GET,POST,PUT,DELETE,PATCH',
   credentials: true,
 };

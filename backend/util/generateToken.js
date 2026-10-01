@@ -14,10 +14,15 @@ const REFRESH_COOKIE = "refresh_token";
 const ACCESS_TTL_SECONDS = 15 * 60;
 const REFRESH_TTL_SECONDS = 7 * 24 * 60 * 60;
 
+const isProduction = process.env.NODE_ENV === "production";
+
+// In production the frontend and backend are on different sites (cross-site),
+// so cookies must be SameSite=None + Secure to be sent on fetch/XHR requests.
+// Locally the app is same-site over http, so keep Lax + non-secure.
 const baseCookieOptions = {
     httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    sameSite: isProduction ? "none" : "lax",
+    secure: isProduction,
 };
 
 const setCookie = (res, name, token, maxAgeMs) =>
